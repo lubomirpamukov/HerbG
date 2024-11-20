@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35506.116 d17.12
+VisualStudioVersion = 17.12.35506.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herbg", "Herbg\Herbg.csproj", "{77E13075-A366-4711-9AB8-53B1E81FEADE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herbg.Data", "Herbg.Data\Herbg.Data.csproj", "{63435691-EFEC-48EE-B3DC-B5361820A16D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herbg.Models", "Herbg.Models\Herbg.Models.csproj", "{1ACDB574-3782-4BE1-98B7-BD7D8759F681}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Herbg.Common", "Herbg.Common\Herbg.Common.csproj", "{7F076FA4-7948-4F54-8C21-F2F653BB4CDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{1ACDB574-3782-4BE1-98B7-BD7D8759F681}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1ACDB574-3782-4BE1-98B7-BD7D8759F681}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1ACDB574-3782-4BE1-98B7-BD7D8759F681}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F076FA4-7948-4F54-8C21-F2F653BB4CDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F076FA4-7948-4F54-8C21-F2F653BB4CDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F076FA4-7948-4F54-8C21-F2F653BB4CDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F076FA4-7948-4F54-8C21-F2F653BB4CDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
