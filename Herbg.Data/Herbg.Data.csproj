@@ -16,4 +16,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Herbg.Models\Herbg.Models.csproj" />
+  </ItemGroup>
+
 </Project>
