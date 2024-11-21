@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Herbg.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Herbg.Models;
 
-public class ProductSizeEnum
+public class ProductSize
 {
     public string ProductId { get; set; } = null!;
 
@@ -16,7 +17,7 @@ public class ProductSizeEnum
 
     public int SizeId { get; set; }
 
-    public virtual ProductSizeEnum Size { get; set; } = null!;
+    public virtual Size Size { get; set; } = null!;
 
     [Required]
     public int Quantity { get; set; }
