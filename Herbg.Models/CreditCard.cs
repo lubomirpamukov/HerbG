@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,4 +33,18 @@ public class CreditCard
     public DateTime ExpirationDate { get; set; }
 
     public bool IsDeleted { get; set; }
+
+    [Required]
+    public string ClientId { get; set; } = null!;
+
+    [Required]
+    [ForeignKey(nameof(ClientId))]
+    public virtual ApplicationUser Client { get; set; } = null!;
+
+    [Required]
+    required public string OrderId { get; set; } = null!;
+
+    [Required]
+    [ForeignKey(nameof(OrderId))]
+    public virtual Order Order { get; set; } = null!;
 }
