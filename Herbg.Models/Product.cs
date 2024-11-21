@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using static Herbg.Common.ValidationConstants.Product;
@@ -17,12 +18,6 @@ public class Product
     [Required]
     [MaxLength(ProductNameMaxLength)]
     public string Name { get; set; } = null!;
-
-    [Required]
-    [ForeignKey(nameof(Category))]
-    public int CategoryId { get; set; }
-
-    public virtual Category Category { get; set; } = null!;
 
     [Required]
     [Range(ProductPriceMinvalue, ProductPriceMaxValue, ErrorMessage = ProductPriceErrorMessage)]
@@ -44,4 +39,18 @@ public class Product
     public virtual Manufactorer Manufactorer { get; set; } = null!;
 
     public bool IsDeleted { get; set; }
+
+    [Required]
+    [ForeignKey(nameof(Category))]
+    public int CategoryId { get; set; }
+
+    public virtual Category Category { get; set; } = null!;
+
+    public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
+
+    public virtual ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
+
+    public virtual ICollection<ProductSize> ProductSizes { get; set; } = new List<ProductSize>();
+
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }
