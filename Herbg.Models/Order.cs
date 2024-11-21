@@ -22,8 +22,6 @@ public class Order
     [Required]
     public virtual ApplicationUser Client { get; set; } = null!;
 
-    [Required]
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
     [Required]
     public DateTime Date { get; set; } = DateTime.Now;
@@ -38,4 +36,10 @@ public class Order
     public string? CardId { get; set; }
     
     public virtual CreditCard? Card { get; set; }
+
+    [Required]
+    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+
+    public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
+
 }
