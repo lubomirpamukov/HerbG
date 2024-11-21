@@ -20,4 +20,6 @@ public class Manufactorer
     [Required]
     [MaxLength(ManufactorerAddressMaxLength)]
     public string Address { get; set; } = null!;
+
+    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }
