@@ -19,4 +19,13 @@ public class ApplicationUser : IdentityUser
     public bool IsDeleted { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+
+    public virtual ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
+
+    public virtual ICollection<CompanyUser> CompanyUsers { get; set; } = new List<CompanyUser>();
+
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    public virtual ICollection<CreditCard> CreditCards { get; set; } = new List<CreditCard>();
+
 }
