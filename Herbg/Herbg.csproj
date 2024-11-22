@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Herbg.Data\Herbg.Data.csproj" />
+    <ProjectReference Include="..\Herbg.Infrastructure\Herbg.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
