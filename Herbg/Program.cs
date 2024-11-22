@@ -1,7 +1,9 @@
 using Herbg.Data;
+using Herbg.Infrastructure;
+using Herbg.Infrastructure.Interfaces;
 using Herbg.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Core.Types;
 
 namespace Herbg
 {
@@ -21,6 +23,7 @@ namespace Herbg
             builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped(typeof(IRepositroy<>), typeof(Repository<>));
 
             var app = builder.Build();
 
