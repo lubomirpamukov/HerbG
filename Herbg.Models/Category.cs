@@ -16,4 +16,8 @@ public class Category
     public bool IsDeleted { get; set; }
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+
+    [Required]
+    [MaxLength(CategoryDescriptionMaxLength)]
+    public string Description { get; set; } = null!;
 }
