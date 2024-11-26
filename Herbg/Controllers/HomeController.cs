@@ -52,6 +52,16 @@ namespace Herbg.Controllers
             return View(viewModel);
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        public IActionResult Contact() 
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
