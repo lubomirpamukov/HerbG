@@ -3,6 +3,7 @@ using Herbg.Infrastructure;
 using Herbg.Infrastructure.Interfaces;
 using Herbg.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using NuGet.Protocol.Core.Types;
 
 namespace Herbg

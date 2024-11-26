@@ -26,6 +26,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Herbg.Data\Herbg.Data.csproj" />
     <ProjectReference Include="..\Herbg.Infrastructure\Herbg.Infrastructure.csproj" />
+    <ProjectReference Include="..\Herbg.ViewModels\Herbg.ViewModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Seeder\" />
+    <Folder Include="wwwroot\images\products\" />
   </ItemGroup>
 
 </Project>
