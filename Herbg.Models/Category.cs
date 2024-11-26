@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.IO.Pipelines;
 using static Herbg.Common.ValidationConstants.Category;
 namespace Herbg.Models;
 
@@ -20,4 +21,8 @@ public class Category
     [Required]
     [MaxLength(CategoryDescriptionMaxLength)]
     public string Description { get; set; } = null!;
+
+    [Required]
+    [MaxLength(CategoryImagePathMaxLength)]
+    public string ImagePath { get; set; } = null!;
 }
