@@ -105,8 +105,13 @@ namespace Herbg.Data.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -119,6 +124,40 @@ namespace Herbg.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Explore our range of medicinal herbs.",
+                            ImagePath = "/images/categories/medical-herb-category.jpg",
+                            IsDeleted = false,
+                            Name = "Medicinal Herbs"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Discover fresh and aromatic herbs.",
+                            ImagePath = "/images/categories/culinary-category.jpg",
+                            IsDeleted = false,
+                            Name = "Culinary Herbs"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Savor the soothing flavors of our premium herbal teas. Perfect for relaxation and wellness.",
+                            ImagePath = "/images/categories/herbal-teas.jpg",
+                            IsDeleted = false,
+                            Name = "Herbal Teas"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Discover our selection of herbs for aromatherapy. Perfect for relaxation, focus, and mood enhancement.",
+                            ImagePath = "/images/categories/aromatherapy-herbs.jpg",
+                            IsDeleted = false,
+                            Name = "Aromatherapy Herbs"
+                        });
                 });
 
             modelBuilder.Entity("Herbg.Models.Company", b =>
@@ -225,6 +264,26 @@ namespace Herbg.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Manufactorers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "gk.strelbishte 124, Sofia",
+                            Name = "Bilkibg"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "gk.lulin 24, Sofia",
+                            Name = "Herbas"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Address = "gk.vrajdebna 12, Sofia",
+                            Name = "7Season"
+                        });
                 });
 
             modelBuilder.Entity("Herbg.Models.Order", b =>
@@ -270,7 +329,7 @@ namespace Herbg.Data.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -285,9 +344,6 @@ namespace Herbg.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("OrderId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -297,9 +353,53 @@ namespace Herbg.Data.Migrations
 
                     b.HasIndex("ManufactorerId");
 
-                    b.HasIndex("OrderId");
-
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "6bc2d52c-dee4-474d-9918-ef1375e38a00",
+                            CategoryId = 3,
+                            Description = "Herbal Tea Mix: A soothing blend of natural herbs crafted to promote relaxation, improve digestion, and boost overall wellness. Perfect for a calming break anytime.",
+                            ImagePath = "images/products/herbal-tea-mix.jpg",
+                            IsDeleted = false,
+                            ManufactorerId = 1,
+                            Name = "Herbal Tea Mix",
+                            Price = 14.99m
+                        },
+                        new
+                        {
+                            Id = "a59b9080-679b-474a-9d56-f5049850ea94",
+                            CategoryId = 4,
+                            Description = "Lavender Oil: A pure, aromatic essential oil known for its calming properties, skin nourishment, and stress relief. Ideal for relaxation and self-care rituals.",
+                            ImagePath = "images/products/lavender-oil.jpg",
+                            IsDeleted = false,
+                            ManufactorerId = 2,
+                            Name = "Lavender Oil",
+                            Price = 10.99m
+                        },
+                        new
+                        {
+                            Id = "38661195-ce52-48af-905f-d9ab42834679",
+                            CategoryId = 2,
+                            Description = "Dried Rosemary: A fragrant herb with a robust flavor, perfect for enhancing your culinary dishes or brewing into a soothing herbal tea.",
+                            ImagePath = "images/products/rosmery-pack.jpg",
+                            IsDeleted = false,
+                            ManufactorerId = 3,
+                            Name = "Rosemary Pack",
+                            Price = 7.99m
+                        },
+                        new
+                        {
+                            Id = "7549d117-2412-494e-965e-f9cea2c88fea",
+                            CategoryId = 2,
+                            Description = "Basil Plant: A fresh and aromatic herb, ideal for home gardens, cooking, and adding a touch of greenery to your space.",
+                            ImagePath = "images/products/basil-plant.jpg",
+                            IsDeleted = false,
+                            ManufactorerId = 1,
+                            Name = "Basil plant",
+                            Price = 17.99m
+                        });
                 });
 
             modelBuilder.Entity("Herbg.Models.ProductOrder", b =>
@@ -617,10 +717,6 @@ namespace Herbg.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Herbg.Models.Order", null)
-                        .WithMany("Products")
-                        .HasForeignKey("OrderId");
-
                     b.Navigation("Category");
 
                     b.Navigation("Manufactorer");
@@ -790,8 +886,6 @@ namespace Herbg.Data.Migrations
             modelBuilder.Entity("Herbg.Models.Order", b =>
                 {
                     b.Navigation("ProductOrders");
-
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Herbg.Models.Product", b =>
