@@ -24,8 +24,7 @@ public class Product
     public decimal Price { get; set; }
 
     [Required]
-    [Url]
-    public string ImageUrl { get; set; } = null!;
+    public string ImagePath { get; set; } = null!;
 
     [Required]
     [MaxLength(ProductDescriptionMaxLength)]
