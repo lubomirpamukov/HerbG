@@ -37,8 +37,6 @@ public class Order
     
     public virtual CreditCard? Card { get; set; }
 
-    [Required]
-    public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 
     public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
 
