@@ -30,7 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Seeder\" />
     <Folder Include="wwwroot\images\products\" />
   </ItemGroup>
 
