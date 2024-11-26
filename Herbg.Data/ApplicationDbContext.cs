@@ -128,7 +128,8 @@ namespace Herbg.Data
         public DbSet<Category> Categories { get; set; } = null!;
         public DbSet<Company> Companies { get; set; } = null!;
         public DbSet<CompanyUser> CompanyUsers { get; set; } = null!;
-        public DbSet<CreditCard> CreditCards { get; set; } = null!;
+        public DbSet<Cart> Carts { get; set; } = null!;
+        public DbSet<CartItem> CartItems { get; set; } = null!;
         public DbSet<Manufactorer> Manufactorers { get; set; } = null!;
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Herbg.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241125190915_InitialMigration")]
+    [Migration("20241126144720_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -96,6 +96,54 @@ namespace Herbg.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("Herbg.Models.Cart", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId")
+                        .IsUnique();
+
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("Herbg.Models.CartItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CartId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("Herbg.Models.Category", b =>
@@ -206,46 +254,6 @@ namespace Herbg.Data.Migrations
                     b.ToTable("CompanyUsers");
                 });
 
-            modelBuilder.Entity("Herbg.Models.CreditCard", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CVV")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CardHolderName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("CardNumber")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("nvarchar(16)");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("OrderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ClientId");
-
-                    b.ToTable("CreditCards");
-                });
-
             modelBuilder.Entity("Herbg.Models.Manufactorer", b =>
                 {
                     b.Property<int>("Id")
@@ -311,6 +319,9 @@ namespace Herbg.Data.Migrations
 
                     b.Property<int>("PaymentMethod")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -412,6 +423,9 @@ namespace Herbg.Data.Migrations
 
                     b.Property<string>("ProductId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -657,6 +671,36 @@ namespace Herbg.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Herbg.Models.Cart", b =>
+                {
+                    b.HasOne("Herbg.Models.ApplicationUser", "User")
+                        .WithOne("Cart")
+                        .HasForeignKey("Herbg.Models.Cart", "ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Herbg.Models.CartItem", b =>
+                {
+                    b.HasOne("Herbg.Models.Cart", "Cart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Herbg.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Herbg.Models.CompanyUser", b =>
                 {
                     b.HasOne("Herbg.Models.ApplicationUser", "Client")
@@ -676,17 +720,6 @@ namespace Herbg.Data.Migrations
                     b.Navigation("Company");
                 });
 
-            modelBuilder.Entity("Herbg.Models.CreditCard", b =>
-                {
-                    b.HasOne("Herbg.Models.ApplicationUser", "Client")
-                        .WithMany("CreditCards")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-                });
-
             modelBuilder.Entity("Herbg.Models.Order", b =>
                 {
                     b.HasOne("Herbg.Models.ApplicationUser", "Client")
@@ -694,14 +727,6 @@ namespace Herbg.Data.Migrations
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Herbg.Models.CreditCard", "Card")
-                        .WithOne("Order")
-                        .HasForeignKey("Herbg.Models.Order", "Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Card");
 
                     b.Navigation("Client");
                 });
@@ -854,15 +879,21 @@ namespace Herbg.Data.Migrations
 
             modelBuilder.Entity("Herbg.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("CompanyUsers");
+                    b.Navigation("Cart")
+                        .IsRequired();
 
-                    b.Navigation("CreditCards");
+                    b.Navigation("CompanyUsers");
 
                     b.Navigation("Orders");
 
                     b.Navigation("Reviews");
 
                     b.Navigation("Wishlists");
+                });
+
+            modelBuilder.Entity("Herbg.Models.Cart", b =>
+                {
+                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("Herbg.Models.Category", b =>
@@ -873,12 +904,6 @@ namespace Herbg.Data.Migrations
             modelBuilder.Entity("Herbg.Models.Company", b =>
                 {
                     b.Navigation("CompanyUsers");
-                });
-
-            modelBuilder.Entity("Herbg.Models.CreditCard", b =>
-                {
-                    b.Navigation("Order")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Herbg.Models.Manufactorer", b =>

@@ -219,23 +219,40 @@ namespace Herbg.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CreditCards",
+                name: "Carts",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CardNumber = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
-                    CardHolderName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    CVV = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    OrderId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CreditCards", x => x.Id);
+                    table.PrimaryKey("PK_Carts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CreditCards_AspNetUsers_ClientId",
+                        name: "FK_Carts_AspNetUsers_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CardId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_AspNetUsers_ClientId",
                         column: x => x.ClientId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -297,31 +314,57 @@ namespace Herbg.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
+                name: "CartItems",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
-                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
-                    CardId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CartId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.PrimaryKey("PK_CartItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Orders_AspNetUsers_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_CartItems_Carts_CartId",
+                        column: x => x.CartId,
+                        principalTable: "Carts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Orders_CreditCards_Id",
-                        column: x => x.Id,
-                        principalTable: "CreditCards",
+                        name: "FK_CartItems_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductOrders",
+                columns: table => new
+                {
+                    OrderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductOrders", x => new { x.OrderId, x.ProductId });
+                    table.ForeignKey(
+                        name: "FK_ProductOrders_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProductOrders_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -406,31 +449,6 @@ namespace Herbg.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ProductOrders",
-                columns: table => new
-                {
-                    OrderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProductOrders", x => new { x.OrderId, x.ProductId });
-                    table.ForeignKey(
-                        name: "FK_ProductOrders_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ProductOrders_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "Categories",
                 columns: new[] { "Id", "Description", "ImagePath", "IsDeleted", "Name" },
@@ -503,13 +521,24 @@ namespace Herbg.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanyUsers_ClientId",
-                table: "CompanyUsers",
-                column: "ClientId");
+                name: "IX_CartItems_CartId",
+                table: "CartItems",
+                column: "CartId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CreditCards_ClientId",
-                table: "CreditCards",
+                name: "IX_CartItems_ProductId",
+                table: "CartItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carts_ClientId",
+                table: "Carts",
+                column: "ClientId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CompanyUsers_ClientId",
+                table: "CompanyUsers",
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
@@ -577,6 +606,9 @@ namespace Herbg.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CartItems");
+
+            migrationBuilder.DropTable(
                 name: "CompanyUsers");
 
             migrationBuilder.DropTable(
@@ -595,6 +627,9 @@ namespace Herbg.Data.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Carts");
+
+            migrationBuilder.DropTable(
                 name: "Companies");
 
             migrationBuilder.DropTable(
@@ -607,16 +642,13 @@ namespace Herbg.Data.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "CreditCards");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Manufactorers");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }

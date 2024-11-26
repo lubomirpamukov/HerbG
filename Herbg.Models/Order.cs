@@ -33,10 +33,10 @@ public class Order
     [Required]
     public PaymentMethodEnum PaymentMethod { get; set; }
 
+    [Required]
+    public decimal TotalAmount { get; set; }
     public string? CardId { get; set; }
     
-    public virtual CreditCard? Card { get; set; }
-
 
     public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
 

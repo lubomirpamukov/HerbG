@@ -26,6 +26,5 @@ public class ApplicationUser : IdentityUser
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
-    public virtual ICollection<CreditCard> CreditCards { get; set; } = new List<CreditCard>();
-
+    public virtual Cart Cart { get; set; } = new Cart();
 }
