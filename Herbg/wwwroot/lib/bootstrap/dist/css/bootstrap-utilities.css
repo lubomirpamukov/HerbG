@@ -180,6 +180,7 @@
   --bs-form-invalid-border-color: #ea868f;
 }
 
+
 .clearfix::after {
   display: block;
   clear: both;
