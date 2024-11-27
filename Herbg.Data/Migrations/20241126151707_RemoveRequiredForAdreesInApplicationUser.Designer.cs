@@ -4,6 +4,7 @@ using Herbg.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Herbg.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241126151707_RemoveRequiredForAdreesInApplicationUser")]
+    partial class RemoveRequiredForAdreesInApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,7 +112,7 @@ namespace Herbg.Data.Migrations
                     b.HasIndex("ClientId")
                         .IsUnique();
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("Herbg.Models.CartItem", b =>
@@ -140,7 +143,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems", (string)null);
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("Herbg.Models.Category", b =>
@@ -171,7 +174,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
 
                     b.HasData(
                         new
@@ -233,7 +236,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies", (string)null);
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("Herbg.Models.CompanyUser", b =>
@@ -248,7 +251,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("CompanyUsers", (string)null);
+                    b.ToTable("CompanyUsers");
                 });
 
             modelBuilder.Entity("Herbg.Models.Manufactorer", b =>
@@ -271,7 +274,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Manufactorers", (string)null);
+                    b.ToTable("Manufactorers");
 
                     b.HasData(
                         new
@@ -324,7 +327,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasIndex("ClientId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Herbg.Models.Product", b =>
@@ -364,7 +367,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasIndex("ManufactorerId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
 
                     b.HasData(
                         new
@@ -431,7 +434,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductOrders", (string)null);
+                    b.ToTable("ProductOrders");
                 });
 
             modelBuilder.Entity("Herbg.Models.ProductSize", b =>
@@ -449,7 +452,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasIndex("SizeId");
 
-                    b.ToTable("ProductSizes", (string)null);
+                    b.ToTable("ProductSizes");
                 });
 
             modelBuilder.Entity("Herbg.Models.Review", b =>
@@ -484,7 +487,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("Herbg.Models.Size", b =>
@@ -501,7 +504,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Sizes", (string)null);
+                    b.ToTable("Sizes");
                 });
 
             modelBuilder.Entity("Herbg.Models.Wishlist", b =>
@@ -532,7 +535,7 @@ namespace Herbg.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Wishlists", (string)null);
+                    b.ToTable("Wishlists");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
