@@ -10,7 +10,7 @@ namespace Herbg.ViewModels.Product;
 
 public class ProductCardViewModel
 {
-    public string Id { get; set; } = null!;
+    public int Id { get; set; }
     [Required]
     [StringLength(ProductNameMaxLength, MinimumLength = ProductNameMinLength, ErrorMessage = ProductNameErrorMessage)]
     public string Name { get; set; } = null!;
