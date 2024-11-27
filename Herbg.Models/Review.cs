@@ -23,7 +23,7 @@ public class Review
 
     [Required]
     [ForeignKey(nameof(Product))]
-    public string ProductId { get; set; } = null!;
+    public int ProductId { get; set; }
 
     public virtual Product Product { get; set; } = null!;
 

@@ -11,7 +11,7 @@ public class ProductOrder
     public string OrderId { get; set; } = null!;
     public virtual Order Order { get; set; } = null!;
 
-    public string ProductId { get; set; } = null!;
+    public int ProductId { get; set; }
     public virtual Product Product { get; set; } = null!;
 
     public int Quantity { get; set; }

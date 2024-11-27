@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Herbg.Common.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,8 +16,11 @@ public class Cart
     public string ClientId { get; set; } = null!;
 
     [ForeignKey(nameof(ClientId))]
-    public ApplicationUser User { get; set; } = null!;
+    public ApplicationUser Client { get; set; } = null!;
 
-    public ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+    public PaymentMethodEnum PaymentMethod { get; set; }
+
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+
 }
 

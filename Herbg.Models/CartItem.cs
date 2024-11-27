@@ -11,13 +11,13 @@ namespace Herbg.Models;
 public class CartItem
 {
     [Key]
-    public int Id { get; set; }
+    public string Id { get; set; } = null!;
     public string CartId { get; set; } = null!;
 
     [ForeignKey(nameof(CartId))]
     public Cart Cart { get; set; } = null!;
 
-    public string ProductId { get; set; } = null!;
+    public int ProductId { get; set; }
 
     [ForeignKey(nameof(ProductId))]
     public Product Product { get; set; } = null!;

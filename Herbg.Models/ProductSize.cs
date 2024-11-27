@@ -11,7 +11,7 @@ namespace Herbg.Models;
 
 public class ProductSize
 {
-    public string ProductId { get; set; } = null!;
+    public int ProductId { get; set; }
 
     public virtual Product Product { get; set; } = null!;
 

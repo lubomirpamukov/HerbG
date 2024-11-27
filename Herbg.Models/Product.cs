@@ -13,7 +13,7 @@ namespace Herbg.Models;
 public class Product
 {
     [Key]
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public int Id { get; set; }
 
     [Required]
     [MaxLength(ProductNameMaxLength)]

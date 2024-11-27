@@ -21,7 +21,7 @@ public class Wishlist
 
     [Required]
     [ForeignKey(nameof(Product))]
-    public string ProductId { get; set; } = null!;
+    public int ProductId { get; set; }
     public Product Product { get; set; } = null!;
 
     public bool IsDeleted { get; set; }
