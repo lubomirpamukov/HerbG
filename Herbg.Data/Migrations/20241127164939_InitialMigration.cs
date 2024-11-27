@@ -223,7 +223,8 @@ namespace Herbg.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -287,7 +288,8 @@ namespace Herbg.Data.Migrations
                 name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ImagePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -317,10 +319,9 @@ namespace Herbg.Data.Migrations
                 name: "CartItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CartId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -346,7 +347,7 @@ namespace Herbg.Data.Migrations
                 columns: table => new
                 {
                     OrderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -371,7 +372,7 @@ namespace Herbg.Data.Migrations
                 name: "ProductSizes",
                 columns: table => new
                 {
-                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     SizeId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false)
                 },
@@ -399,7 +400,7 @@ namespace Herbg.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     Rating = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false)
@@ -428,7 +429,7 @@ namespace Herbg.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ClientId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProductId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     AddedOn = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -475,10 +476,10 @@ namespace Herbg.Data.Migrations
                 columns: new[] { "Id", "CategoryId", "Description", "ImagePath", "IsDeleted", "ManufactorerId", "Name", "Price" },
                 values: new object[,]
                 {
-                    { "38661195-ce52-48af-905f-d9ab42834679", 2, "Dried Rosemary: A fragrant herb with a robust flavor, perfect for enhancing your culinary dishes or brewing into a soothing herbal tea.", "images/products/rosmery-pack.jpg", false, 3, "Rosemary Pack", 7.99m },
-                    { "6bc2d52c-dee4-474d-9918-ef1375e38a00", 3, "Herbal Tea Mix: A soothing blend of natural herbs crafted to promote relaxation, improve digestion, and boost overall wellness. Perfect for a calming break anytime.", "images/products/herbal-tea-mix.jpg", false, 1, "Herbal Tea Mix", 14.99m },
-                    { "7549d117-2412-494e-965e-f9cea2c88fea", 2, "Basil Plant: A fresh and aromatic herb, ideal for home gardens, cooking, and adding a touch of greenery to your space.", "images/products/basil-plant.jpg", false, 1, "Basil plant", 17.99m },
-                    { "a59b9080-679b-474a-9d56-f5049850ea94", 4, "Lavender Oil: A pure, aromatic essential oil known for its calming properties, skin nourishment, and stress relief. Ideal for relaxation and self-care rituals.", "images/products/lavender-oil.jpg", false, 2, "Lavender Oil", 10.99m }
+                    { 1, 3, "Herbal Tea Mix: A soothing blend of natural herbs crafted to promote relaxation, improve digestion, and boost overall wellness. Perfect for a calming break anytime.", "/images/products/herbal-tea-mix.jpg", false, 1, "Herbal Tea Mix", 14.99m },
+                    { 2, 4, "Lavender Oil: A pure, aromatic essential oil known for its calming properties, skin nourishment, and stress relief. Ideal for relaxation and self-care rituals.", "/images/products/lavender-oil.jpg", false, 2, "Lavender Oil", 10.99m },
+                    { 3, 2, "Dried Rosemary: A fragrant herb with a robust flavor, perfect for enhancing your culinary dishes or brewing into a soothing herbal tea.", "/images/products/rosmery-pack.jpg", false, 3, "Rosemary Pack", 7.99m },
+                    { 4, 2, "Basil Plant: A fresh and aromatic herb, ideal for home gardens, cooking, and adding a touch of greenery to your space.", "/images/products/basil-plant.jpg", false, 1, "Basil plant", 17.99m }
                 });
 
             migrationBuilder.CreateIndex(

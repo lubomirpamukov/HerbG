@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Herbg.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241126144720_InitialMigration")]
+    [Migration("20241127164939_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -107,6 +107,9 @@ namespace Herbg.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId")
@@ -117,11 +120,8 @@ namespace Herbg.Data.Migrations
 
             modelBuilder.Entity("Herbg.Models.CartItem", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CartId")
                         .IsRequired()
@@ -130,9 +130,8 @@ namespace Herbg.Data.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -332,8 +331,11 @@ namespace Herbg.Data.Migrations
 
             modelBuilder.Entity("Herbg.Models.Product", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -372,10 +374,10 @@ namespace Herbg.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6bc2d52c-dee4-474d-9918-ef1375e38a00",
+                            Id = 1,
                             CategoryId = 3,
                             Description = "Herbal Tea Mix: A soothing blend of natural herbs crafted to promote relaxation, improve digestion, and boost overall wellness. Perfect for a calming break anytime.",
-                            ImagePath = "images/products/herbal-tea-mix.jpg",
+                            ImagePath = "/images/products/herbal-tea-mix.jpg",
                             IsDeleted = false,
                             ManufactorerId = 1,
                             Name = "Herbal Tea Mix",
@@ -383,10 +385,10 @@ namespace Herbg.Data.Migrations
                         },
                         new
                         {
-                            Id = "a59b9080-679b-474a-9d56-f5049850ea94",
+                            Id = 2,
                             CategoryId = 4,
                             Description = "Lavender Oil: A pure, aromatic essential oil known for its calming properties, skin nourishment, and stress relief. Ideal for relaxation and self-care rituals.",
-                            ImagePath = "images/products/lavender-oil.jpg",
+                            ImagePath = "/images/products/lavender-oil.jpg",
                             IsDeleted = false,
                             ManufactorerId = 2,
                             Name = "Lavender Oil",
@@ -394,10 +396,10 @@ namespace Herbg.Data.Migrations
                         },
                         new
                         {
-                            Id = "38661195-ce52-48af-905f-d9ab42834679",
+                            Id = 3,
                             CategoryId = 2,
                             Description = "Dried Rosemary: A fragrant herb with a robust flavor, perfect for enhancing your culinary dishes or brewing into a soothing herbal tea.",
-                            ImagePath = "images/products/rosmery-pack.jpg",
+                            ImagePath = "/images/products/rosmery-pack.jpg",
                             IsDeleted = false,
                             ManufactorerId = 3,
                             Name = "Rosemary Pack",
@@ -405,10 +407,10 @@ namespace Herbg.Data.Migrations
                         },
                         new
                         {
-                            Id = "7549d117-2412-494e-965e-f9cea2c88fea",
+                            Id = 4,
                             CategoryId = 2,
                             Description = "Basil Plant: A fresh and aromatic herb, ideal for home gardens, cooking, and adding a touch of greenery to your space.",
-                            ImagePath = "images/products/basil-plant.jpg",
+                            ImagePath = "/images/products/basil-plant.jpg",
                             IsDeleted = false,
                             ManufactorerId = 1,
                             Name = "Basil plant",
@@ -421,8 +423,8 @@ namespace Herbg.Data.Migrations
                     b.Property<string>("OrderId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ProductId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -439,8 +441,8 @@ namespace Herbg.Data.Migrations
 
             modelBuilder.Entity("Herbg.Models.ProductSize", b =>
                 {
-                    b.Property<string>("ProductId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<int>("SizeId")
                         .HasColumnType("int");
@@ -474,9 +476,8 @@ namespace Herbg.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
@@ -525,9 +526,8 @@ namespace Herbg.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -673,13 +673,13 @@ namespace Herbg.Data.Migrations
 
             modelBuilder.Entity("Herbg.Models.Cart", b =>
                 {
-                    b.HasOne("Herbg.Models.ApplicationUser", "User")
+                    b.HasOne("Herbg.Models.ApplicationUser", "Client")
                         .WithOne("Cart")
                         .HasForeignKey("Herbg.Models.Cart", "ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("Herbg.Models.CartItem", b =>

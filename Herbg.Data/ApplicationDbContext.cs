@@ -81,10 +81,10 @@ namespace Herbg.Data
                 (
                     new Product
                     {
-                        Id = "6bc2d52c-dee4-474d-9918-ef1375e38a00",
+                        Id= 1,
                         Name = "Herbal Tea Mix",
                         Price = 14.99m,
-                        ImagePath = "images/products/herbal-tea-mix.jpg",
+                        ImagePath = "/images/products/herbal-tea-mix.jpg",
                         Description = "Herbal Tea Mix: A soothing blend of natural herbs crafted to promote relaxation, improve digestion, and boost overall wellness. Perfect for a calming break anytime.",
                         CategoryId = 3,
                         ManufactorerId = 1
@@ -92,30 +92,30 @@ namespace Herbg.Data
                     },
                     new Product
                     {
-                        Id = "a59b9080-679b-474a-9d56-f5049850ea94",
+                        Id = 2,
                         Name = "Lavender Oil",
                         Price = 10.99m,
-                        ImagePath = "images/products/lavender-oil.jpg",
+                        ImagePath = "/images/products/lavender-oil.jpg",
                         Description = "Lavender Oil: A pure, aromatic essential oil known for its calming properties, skin nourishment, and stress relief. Ideal for relaxation and self-care rituals.",
                         CategoryId = 4,
                         ManufactorerId = 2
                     },
                     new Product
                     {
-                        Id = "38661195-ce52-48af-905f-d9ab42834679",
+                        Id = 3,
                         Name = "Rosemary Pack",
                         Price = 7.99m,
-                        ImagePath = "images/products/rosmery-pack.jpg",
+                        ImagePath = "/images/products/rosmery-pack.jpg",
                         Description = "Dried Rosemary: A fragrant herb with a robust flavor, perfect for enhancing your culinary dishes or brewing into a soothing herbal tea.",
                         CategoryId = 2,
                         ManufactorerId = 3
                     },
                     new Product
                     {
-                        Id = "7549d117-2412-494e-965e-f9cea2c88fea",
+                        Id=4,
                         Name = "Basil plant",
                         Price = 17.99m,
-                        ImagePath = "images/products/basil-plant.jpg",
+                        ImagePath = "/images/products/basil-plant.jpg",
                         Description = "Basil Plant: A fresh and aromatic herb, ideal for home gardens, cooking, and adding a touch of greenery to your space.",
                         CategoryId = 2,
                         ManufactorerId = 1
