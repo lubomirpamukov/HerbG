@@ -25,7 +25,7 @@ namespace Herbg.Controllers
             var categoreis = await _dbContext.Categories
                 .Select(c => new CategoryCardViewModel 
                 {
-                   Id = c.Id,
+                    Id = c.Id,
                     Name = c.Name,
                     Description = c.Description,
                     ImagePath = c.ImagePath
