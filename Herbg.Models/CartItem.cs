@@ -10,8 +10,6 @@ namespace Herbg.Models;
 
 public class CartItem
 {
-    [Key]
-    public string Id { get; set; } = null!;
     public string CartId { get; set; } = null!;
 
     [ForeignKey(nameof(CartId))]

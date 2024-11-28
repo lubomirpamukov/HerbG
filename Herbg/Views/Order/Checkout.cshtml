@@ -1,0 +1,162 @@
+﻿@using Herbg.ViewModels.Order
+@model CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Checkout</h1>
+
+    <form asp-action="ConfirmOrder" asp-controller="Order" method="post">
+        <div class="row">
+            <!-- Address Information -->
+            <div class="col-md-6">
+                <h3 class="mb-3">Shipping Address</h3>
+
+                <div class="mb-3">
+                    <label for="fullName" class="form-label">Full Name</label>
+                    <input type="text" id="fullName" name="FullName" class="form-control"
+                           placeholder="@((Model.FullName != null && Model.FullName.Length > 0) ? Model.FullName : "Enter your full name")"
+                           asp-for="FullName" required />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="address" class="form-label">Address</label>
+                    <textarea id="address" name="Address" class="form-control" rows="3"
+                              placeholder="@((Model.Address != null && Model.Address.Length > 0) ? Model.Address : "Enter your address")"
+                              asp-for="Address" required></textarea>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" id="city" name="City" class="form-control"
+                           placeholder="@((Model.City != null && Model.City.Length > 0) ? Model.City : "Enter your city")"
+                           asp-for="City" required />
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="zipCode" class="form-label">ZIP Code</label>
+                    <input type="text" id="zipCode" name="ZipCode" class="form-control"
+                           placeholder="@((Model.ZipCode != null && Model.ZipCode.Length > 0) ? Model.ZipCode : "Enter your ZIP code")"
+                           asp-for="ZipCode" required />
+                    <span asp-validation-for="ZipCode" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="country" class="form-label">Country</label>
+                    <input type="text" id="country" name="Country" class="form-control"
+                           placeholder="@((Model.Country != null && Model.Country.Length > 0) ? Model.Country : "Enter your country")"
+                           asp-for="Country" required />
+                    <span asp-validation-for="Country" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="col-md-6">
+                <h3 class="mb-3">Payment Method</h3>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" id="cash" value="Cash" checked />
+                    <label class="form-check-label" for="cash">
+                        Cash on Delivery
+                    </label>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" id="credit" value="Credit" />
+                    <label class="form-check-label" for="credit">
+                        Credit Card
+                    </label>
+                </div>
+
+                <div id="creditCardDetails" style="display: none;">
+                    <div class="mb-3">
+                        <label for="cardNumber" class="form-label">Card Number</label>
+                        <input type="text" id="cardNumber" name="CardNumber" class="form-control" placeholder="1234 5678 9012 3456"
+                               asp-for="CardNumber" />
+                        <span asp-validation-for="CardNumber" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiryDate" class="form-label">Expiry Date</label>
+                        <input type="text" id="expiryDate" name="ExpiryDate" class="form-control" placeholder="MM/YY"
+                               asp-for="ExpiryDate" />
+                        <span asp-validation-for="ExpiryDate" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cvv" class="form-label">CVV</label>
+                        <input type="text" id="cvv" name="CVV" class="form-control" placeholder="123" asp-for="CVV" />
+                        <span asp-validation-for="CVV" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Overview -->
+        <div class="mt-5">
+            <h3 class="mb-3">Order Overview</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>$@(item.Price * item.Quantity)</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Subtotal</td>
+                        <td>@Model.Subtotal.ToString("C")</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Shipping</td>
+                        <td>@Model.ShippingCost.ToString("C")</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Total</td>
+                        <td>@Model.Total.ToString("C")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-success btn-lg me-3">
+                <i class="fas fa-check"></i> Confirm Order
+            </button>
+            <a href="@Url.Action("Index", "Cart")" class="btn btn-danger btn-lg">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial.cshtml" />
+    
+    <script>
+        // Show or hide credit card details based on payment method selection
+        document.querySelectorAll('input[name="PaymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', function () {
+                const creditCardDetails = document.getElementById('creditCardDetails');
+                if (this.id === 'credit') {
+                    creditCardDetails.style.display = 'block';
+                } else {
+                    creditCardDetails.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}

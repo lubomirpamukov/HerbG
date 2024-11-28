@@ -1,5 +1,6 @@
 ﻿using Herbg.Data;
 using Herbg.ViewModels.Product;
+using Herbg.ViewModels.Review;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +29,31 @@ namespace Herbg.Controllers
 
 
             return View(products);
+        }
+
+        public async Task<IActionResult> Details(int id) 
+        {
+            var product = await _context.Products
+                .Where(p => p.Id == id)
+                .Select(p => new ProductDetailsViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Category = p.Category.Name,
+                    Description = p.Description,
+                    ImagePath = p.ImagePath,
+                    Price = p.Price,
+                    Reviews = new List<ReviewViewModel>()
+                })
+                .FirstOrDefaultAsync();
+
+            if (product == null)
+            { 
+                return NotFound();
+            }
+
+            return View(product);
+
         }
     }
 }

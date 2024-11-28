@@ -52,4 +52,7 @@ public class Product
     public virtual ICollection<ProductSize> ProductSizes { get; set; } = new List<ProductSize>();
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+
 }

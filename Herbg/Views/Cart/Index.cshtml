@@ -41,15 +41,21 @@
                             <td>$@item.Price</td>
                             <td>
                                 <form asp-action="UpdateQuantity" asp-controller="Cart" method="post" class="d-inline">
-                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="id" value="@item.ProductId" />
                                     <input type="number" name="quantity" value="@item.Quantity" min="1" class="form-control d-inline w-auto" style="width: 80px;" />
                                     <button type="submit" class="btn btn-sm btn-primary">Update</button>
                                 </form>
+
+                                <form asp-action="Details" asp-controller="Product" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.ProductId" />
+                                    <button type="submit" class="btn btn-sm btn-secondary">Details</button>
+                                </form>
                             </td>
+                                
                             <td>$@(item.Price * item.Quantity)</td>
                             <td>
-                                <form asp-action="RemoveItem" asp-controller="Cart" method="post">
-                                    <input type="hidden" name="id" value="@item.Id" />
+                                <form asp-action="RemoveItem" asp-controller="Cart" method="post" class="mt-1">
+                                    <input type="hidden" name="id" value="@item.ProductId" />
                                     <button type="submit" class="btn btn-sm btn-danger">
                                         <i class="bi bi-trash-fill"></i> Remove
                                     </button>
@@ -74,6 +80,7 @@
                         </p>
                         <hr />
                         <form asp-action="Checkout" asp-controller="Order" method="post">
+                            <input type="hidden" name="cartId" value="@Model.Id" />
                             <button type="submit" class="btn btn-success w-100">Proceed to Checkout</button>
                         </form>
                     </div>
