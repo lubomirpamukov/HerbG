@@ -36,9 +36,10 @@ namespace Herbg.Controllers
                     .Where(c => c.ClientId == clientId)
                     .Select(c => new CartViewModel 
                     {
+                        Id = c.Id,
                        CartItems = c.CartItems.Select(ci => new CartItemViewModel 
                        {
-                            Id = ci.ProductId,
+                            ProductId = ci.ProductId,
                             ImagePath = ci.Product.ImagePath,
                             Name = ci.Product.Name,
                             Price = ci.Price,
@@ -104,6 +105,7 @@ namespace Herbg.Controllers
             return Json(cartItemCount);  // Returns the count as JSON
         }
 
+        [HttpPost]
         public async Task<IActionResult> AddToCart(int id, int quantity = 1)
         {
             var clientId = _userManager.GetUserId(User);
@@ -151,7 +153,6 @@ namespace Herbg.Controllers
                     // Add new item to the cart
                     var cartItemToAdd = new CartItem
                     {
-                        Id = Guid.NewGuid().ToString(),
                         CartId = clientCart.Id,
                         ProductId = productToAdd.Id,
                         Quantity = quantity,
