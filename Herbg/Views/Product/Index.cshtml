@@ -1,6 +1,15 @@
 ﻿@using Herbg.ViewModels.Product
 @model IEnumerable<ProductCardViewModel>
 
+<style>
+    .card-img-top {
+        width: 100%;
+        height: 12rem;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+</style>
+
 <div class="container mt-5">
     <h2 class="text-center mb-4">Shop</h2>
 
@@ -12,16 +21,26 @@
 
             <div class="col">
                 <div class="card h-100">
-                    <img src="@product.ImagePath" class="card-img-top" alt="@product.Name" style="height: 200px; object-fit: cover;">
+                    <img src="@product.ImagePath" class="card-img-top" alt="@product.Name" >
                     <div class="card-body d-flex flex-column h-100">
                         <h5 class="card-title">@product.Name</h5>
                         <div class="card-text">@truncatedDescription <form asp-controller="Product" asp-action="Details" method="post"> <input type="hidden" name="id" value="@product.Id" /><button type="submit" class="btn btn-link ">Learn More...</button></form> </div>  @* Add "..." to indicate truncation *@
 
-                        <p class="card-text mt-auto">$@product.Price</p>
-                        <form asp-controller="Cart" asp-action="AddToCart" method="post" class="mt-auto">
-                            <input type="hidden" name="id" value="@product.Id" />
-                            <button type="submit" class="btn btn-primary">Add to Cart</button>
-                        </form>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-auto justify-content-around">
+
+                            <p class="card-text col-2">$@product.Price</p>
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="col-3">
+                                <input type="hidden" name="id" value="@product.Id" />
+                                <button type="submit" class="btn btn-primary">Add</button>
+                            </form>
+                            <form asp-controller="Wishlist" asp-action="Add" method="post" class="col-1">
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <button type="submit" class="btn btn-secondary">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </form>
+
+                        </div>
                         
                     </div>
                 </div>
