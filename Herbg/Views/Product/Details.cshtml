@@ -52,27 +52,58 @@
         </div>
     </div>
 
-    <div class="row mt-5">
-        <div class="col-12">
-            <h3 class="mb-3">Customer Reviews</h3>
-            @if (Model.Reviews.Any())
-            {
-                <div class="list-group">
-                    @foreach (var review in Model.Reviews)
-                    {
-                        <div class="list-group-item">
-                            <h5 class="mb-1">@review.ReviewerName</h5>
-                            <p class="mb-1">@review.Comment</p>
-                            <small class="text-muted">Rating: @review.Rating/5</small>
+    <div class="container mt-5">
+        <h1 class="text-center text-success">Customer Reviews</h1>
+        <p class="text-center text-muted">Read what others are saying about our products.</p>
+
+        @if (!Model.Reviews.Any())
+        {
+            <div class="text-center">
+                <h4 class="text-muted">No reviews yet. Be the first to leave a review!</h4>
+                <a asp-action="Create" asp-controller="Review" asp-route-id="@Model.Id" class="btn btn-outline-success mt-3">
+                    <i class="fas fa-pen"></i> Write a Review
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row justify-content-center mt-4">
+                @foreach (var review in Model.Reviews)
+                {
+                    <div class="col-lg-6 col-md-8 mb-4">
+                        <div class="card shadow-sm border-0">
+                            <div class="card-body">
+                                <!-- Reviewer Name -->
+                                <h5 class="card-title text-success">
+                                    <i class="fas fa-user-circle"></i> @review.ReviewerName
+                                </h5>
+
+                                <!-- Star Rating -->
+                                <div class="mb-3">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= review.Rating)
+                                        {
+                                            <i class="fas fa-star text-warning"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-star text-muted"></i>
+                                        }
+                                    }
+                                </div>
+
+                                <!-- Comment -->
+                                <p class="card-text">@review.Description</p>
+                            </div>
+                            <div class="card-footer text-muted small">
+                                Reviewed on @DateTime.Now.ToString("MMMM dd, yyyy")
+                            </div>
                         </div>
-                    }
-                </div>
-            }
-            else
-            {
-                <p class="text-muted">No reviews yet. Be the first to write one!</p>
-            }
-        </div>
+                    </div>
+                }
+            </div>
+        }
     </div>
 </div>
 
