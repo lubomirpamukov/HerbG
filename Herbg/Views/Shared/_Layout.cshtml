@@ -27,8 +27,16 @@
                         <li class="nav-item"><a asp-controller="Home" asp-action="Contact" class="nav-link">Contact</a></li>
                        
                         <partial name="_LoginPartial.cshtml"></partial>
+
                         <li class="nav-item">
-                            <a href="/Cart/Index" class="nav-link">
+                            <a asp-controller="Wishlist" asp-action="Index" class="nav-link">
+                                <i class="fas fa-heart fs-4"></i>
+                                <span class="position-absolute top-30 start-90 translate-middle badge rounded-pill bg-danger" id="wishListItemCount">0</span> <!-- This will be updated via AJAX -->
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a asp-controller="Cart" asp-action="Index" class="nav-link">
                                 <i class="fas fa-shopping-cart fs-4"></i>
                                 <span class="position-absolute top-30 start-90 translate-middle badge rounded-pill bg-danger" id="cartItemCount">0</span> <!-- This will be updated via AJAX -->
                             </a>
@@ -53,17 +61,29 @@
     <script>
         function updateCartItemCount() {
             $.get("/Cart/GetCartItemCount", function(cartItemCount) {
-                $('#cartItemCount').text(cartItemCount);  // Update the element with id 'cartItemCount' dynamically
+                $('#cartItemCount').text(cartItemCount); // Update the cart count dynamically
+            }).fail(function() {
+                console.error("Failed to fetch cart item count.");
             });
         }
 
-        // Call this function when the page loads
-        $(document).ready(function() {
-            updateCartItemCount();  // Initial load
+        function updateWishlistItemCount() {
+            $.get("/Wishlist/GetWishlistItemCount", function(wishlistItemCount) {
+                $('#wishListItemCount').text(wishlistItemCount); // Update the wishlist count dynamically
+            }).fail(function() {
+                console.error("Failed to fetch wishlist item count.");
+            });
+        }
 
-            // Optional: Call this function when an item is added to the cart
+        // Call these functions when the page loads
+        $(document).ready(function() {
+            updateCartItemCount(); // Initial load for cart
+            updateWishlistItemCount(); // Initial load for wishlist
+
+            // Optional: Trigger updates when forms are submitted
             $('form').submit(function() {
-                updateCartItemCount();  // Update cart count after form submit
+                updateCartItemCount(); // Update cart count after form submit
+                updateWishlistItemCount(); // Update wishlist count after form submit
             });
         });
     </script>
