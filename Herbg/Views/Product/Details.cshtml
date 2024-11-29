@@ -25,6 +25,7 @@
                 <div class="mb-3">
                     <label for="quantity" class="form-label">Quantity</label>
                     <input type="number" name="quantity" id="quantity" class="form-control w-50" value="1" min="1" />
+                    <input type="hidden" name="id" value="@Model.Id" />
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg">
                     <i class="fas fa-cart-plus"></i> Add to Cart
