@@ -50,6 +50,13 @@
                                     <input type="hidden" name="id" value="@item.ProductId" />
                                     <button type="submit" class="btn btn-sm btn-secondary">Details</button>
                                 </form>
+
+                                <form asp-action="MoveToWishlist" asp-controller="Cart" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.ProductId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </form>
                             </td>
                                 
                             <td>$@(item.Price * item.Quantity)</td>
