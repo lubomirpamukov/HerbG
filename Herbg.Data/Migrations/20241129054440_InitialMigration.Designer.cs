@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Herbg.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241128140130_RemovedCardIdFromOrder")]
-    partial class RemovedCardIdFromOrder
+    [Migration("20241129054440_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

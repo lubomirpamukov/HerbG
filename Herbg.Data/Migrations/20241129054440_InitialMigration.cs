@@ -246,8 +246,7 @@ namespace Herbg.Data.Migrations
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     PaymentMethod = table.Column<int>(type: "int", nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    CardId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -319,7 +318,6 @@ namespace Herbg.Data.Migrations
                 name: "CartItems",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CartId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
@@ -327,7 +325,7 @@ namespace Herbg.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartItems", x => x.Id);
+                    table.PrimaryKey("PK_CartItems", x => new { x.ProductId, x.CartId });
                     table.ForeignKey(
                         name: "FK_CartItems_Carts_CartId",
                         column: x => x.CartId,
@@ -525,11 +523,6 @@ namespace Herbg.Data.Migrations
                 name: "IX_CartItems_CartId",
                 table: "CartItems",
                 column: "CartId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CartItems_ProductId",
-                table: "CartItems",
-                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_ClientId",
