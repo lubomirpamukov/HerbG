@@ -201,5 +201,35 @@ namespace Herbg.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> MoveToWishlist(int id) 
+        {
+            //Check if client is logged
+            var clientId = _userManager.GetUserId(User);
+            if (string.IsNullOrEmpty(clientId))
+            {
+                // Client is not authenticated; redirect to login
+                return RedirectToAction("Login", "Account");
+            }
+
+            //Check if product is in client cart
+            var isProductInClientCart = await _context.CartItems
+                .Include(x => x.Cart)
+                .FirstOrDefaultAsync(ci => ci.ProductId == id && ci.Cart.ClientId == clientId);
+            if (isProductInClientCart == null)
+            {
+                //There is no product matching this id in client cart
+                return NotFound();
+            }
+
+            //Add to wishlist
+            var newWishlistItem = new Wishlist { ClientId = clientId, ProductId = isProductInClientCart.ProductId };
+            await _context.Wishlists.AddAsync(newWishlistItem);
+            //Remove from cart
+            _context.CartItems.Remove(isProductInClientCart);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index", "Cart");
+        }
     }
 }
