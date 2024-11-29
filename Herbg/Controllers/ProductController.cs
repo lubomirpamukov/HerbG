@@ -35,6 +35,8 @@ namespace Herbg.Controllers
         {
             var product = await _context.Products
                 .Where(p => p.Id == id)
+                .Include(p => p.Reviews)
+                .ThenInclude(r => r.Client)
                 .Select(p => new ProductDetailsViewModel
                 {
                     Id = p.Id,
@@ -43,7 +45,14 @@ namespace Herbg.Controllers
                     Description = p.Description,
                     ImagePath = p.ImagePath,
                     Price = p.Price,
-                    Reviews = new List<ReviewViewModel>()
+                    Reviews = p.Reviews.Select(r => new ReviewViewModel 
+                    {
+                        Id = r.Id,
+                        Description = r.Description!,
+                        Rating = r.Rating,
+                        ReviewerName = r.Client.UserName!
+                       
+                    }).ToList()
                 })
                 .FirstOrDefaultAsync();
 
