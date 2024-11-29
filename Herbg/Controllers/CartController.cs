@@ -52,7 +52,13 @@ namespace Herbg.Controllers
 
                 if (clientCart == null) 
                 {
-                    return NotFound();
+                    var newCart = new Cart
+                    {
+                        ClientId = clientId!
+                    };
+
+                    _context.Carts.Add(newCart);
+                    await _context.SaveChangesAsync();
                 }
 
                 return View(clientCart);
@@ -164,7 +170,7 @@ namespace Herbg.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Index","Product");
             }
 
             return RedirectToAction("Index");
