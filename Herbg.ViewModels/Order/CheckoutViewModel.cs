@@ -1,4 +1,5 @@
-﻿using Herbg.ViewModels.Cart;
+﻿using Herbg.Common.Enums;
+using Herbg.ViewModels.Cart;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -32,7 +33,7 @@ public class CheckoutViewModel
     public string Country { get; set; } = string.Empty;
 
     [Required(ErrorMessage = PaymentMethodRequiredMessage)]
-    public string PaymentMethod { get; set; } = string.Empty;
+    public PaymentMethodEnum PaymentMethod { get; set; }
 
     [StringLength(CardNumberMaxLength, MinimumLength = CardNumberMinLength, ErrorMessage = CardNumberErrorMessage)]
     [RegularExpression(@"^\d{13,16}$", ErrorMessage = CardNumberRegexErrorMessage)]
