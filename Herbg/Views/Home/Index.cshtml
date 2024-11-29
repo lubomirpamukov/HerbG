@@ -32,7 +32,7 @@
                                         <h5 class="card-title">@category.Name</h5>
                                         <p class="card-text">@category.Description</p>
 
-                                        <form asp-controller="Categories" asp-action="Explore" method="post">
+                                        <form asp-controller="Product" asp-action="Index" method="post">
                                             <input type="hidden" name="id" value="@category.Id" />
                                             <button type="submit" class="btn btn-success mt-auto">Explore</button>
                                         </form>
