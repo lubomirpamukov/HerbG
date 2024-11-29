@@ -35,7 +35,6 @@ public class Order
 
     [Required]
     public decimal TotalAmount { get; set; }
-    public string? CardId { get; set; }
     
     public virtual ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
 
