@@ -1,0 +1,25 @@
+﻿@using Herbg.ViewModels.Order
+@model ThankYouViewModel
+
+@{
+    ViewData["Title"] = "Thank You";
+}
+
+<div class="container mt-5">
+    <div class="text-center">
+        <h1 class="display-4 text-success">Thank You!</h1>
+        <p class="lead">Your order has been placed successfully.</p>
+        <p>We appreciate your business and are preparing your order for shipment. A confirmation email has been sent to your provided address.</p>
+        <p><strong>Order Number:</strong> @Model.OrderNumber</p>
+    </div>
+
+    <div class="mt-5 text-center">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+        <a href="@Url.Action("Details", "Order", new { id = Model.OrderNumber })" class="btn btn-secondary btn-lg">
+            <i class="fas fa-info-circle"></i> View Order Details
+        </a>
+    </div>
+</div>
+
