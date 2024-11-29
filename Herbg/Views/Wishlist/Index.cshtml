@@ -1,0 +1,65 @@
+﻿@using Herbg.ViewModels.Wishlist
+@model IEnumerable<WishlistItemViewModel>
+
+<style>
+    .card-img-top {
+        width: 100%;
+        height: 8rem;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+</style>
+
+
+<div class="container mt-5">
+    <h1 class="text-center text-success">My Wishlist</h1>
+    <p class="text-center text-muted">Save your favorite herbs and revisit them anytime.</p>
+
+   
+
+    <!-- Wishlist Items -->
+    <div class="row my-5">
+        @if (!Model.Any())
+        {
+            <div class="col-12 text-center">
+                <h4 class="text-muted">Your wishlist is currently empty.</h4>
+            </div>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                var truncatedDescription = string.Join(" ", item.Description.Split(' ').Take(5));
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <img src="@item.ImagePath" class="card-img-top" alt="@item.Name">
+                        <div class="card-body d-flex flex-column mt-auto">
+                            <h5 class="card-title text-success">@item.Name</h5>
+                            <p class="card-text">@truncatedDescription</p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="text-success fw-bold">@item.Price.ToString("C")</span>
+
+                                <form asp-controller="Product" asp-action="Details" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-book me-2"></i>Details
+                                    </button>
+                                </form>
+                                
+                                <form asp-action="RemoveFromWishlist" method="post" class="d-inline">
+                                    <input type="hidden" name="productId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i> Remove
+                                    </button>
+                                </form>
+                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
