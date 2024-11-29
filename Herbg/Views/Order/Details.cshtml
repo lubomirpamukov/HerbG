@@ -1,0 +1,67 @@
+﻿@using Herbg.ViewModels.Order
+@model OrderDetailsViewModel
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Order Details</h1>
+
+    <!-- Order Information -->
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Customer Information</h4>
+            <p><strong>Email:</strong> @Model.CustomerEmail</p>
+            <p><strong>Address:</strong> @Model.Address</p>
+            <p><strong>Date:</strong> @Model.Date.ToString("MMMM dd, yyyy - hh:mm tt")</p>
+        </div>
+        <div class="col-md-6">
+            <h4>Payment Information</h4>
+            <p><strong>Payment Method:</strong> @Model.PaymentMethod.ToString()</p>
+            <p><strong>Total Amount:</strong> @Model.TotalAmount.ToString("C")</p>
+        </div>
+    </div>
+
+    <hr />
+
+    <!-- Product Orders -->
+    <div class="mt-4">
+        <h4>Products Ordered</h4>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var productOrder in Model.OrderedProducts)
+                {
+                    <tr>
+                        <td>@productOrder.ProductName</td>
+                        <td>@productOrder.Quantity</td>
+                        <td>$@productOrder.Price</td>
+                        <td>$@(productOrder.Quantity * productOrder.Price)</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="text-end fw-bold">Total</td>
+                    <td class="fw-bold">@Model.TotalAmount.ToString("C")</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Back Button -->
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Orders", "Order")" class="btn btn-primary btn-lg">
+            <i class="fas fa-arrow-left"></i> Back to Orders
+        </a>
+    </div>
+</div>
+
