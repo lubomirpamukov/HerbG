@@ -17,34 +17,7 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         @foreach (var product in Model)
         {
-            var truncatedDescription = string.Join(" ", product.Description.Split(' ').Take(5));
-
-            <div class="col">
-                <div class="card h-100">
-                    <img src="@product.ImagePath" class="card-img-top" alt="@product.Name" >
-                    <div class="card-body d-flex flex-column h-100">
-                        <h5 class="card-title">@product.Name</h5>
-                        <div class="card-text">@truncatedDescription <form asp-controller="Product" asp-action="Details" method="post"> <input type="hidden" name="id" value="@product.Id" /><button type="submit" class="btn btn-link ">Learn More...</button></form> </div>  @* Add "..." to indicate truncation *@
-
-                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mt-auto justify-content-around">
-
-                            <p class="card-text col-2">$@product.Price</p>
-                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="col-3">
-                                <input type="hidden" name="id" value="@product.Id" />
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </form>
-                            <form asp-controller="Wishlist" asp-action="Add" method="post" class="col-1">
-                                <input type="hidden" name="productId" value="@product.Id" />
-                                <button type="submit" class="btn btn-secondary">
-                                    <i class="fas fa-heart"></i>
-                                </button>
-                            </form>
-
-                        </div>
-                        
-                    </div>
-                </div>
-            </div>
+           @await Html.PartialAsync("_ProductPartialView", product)
         }
     </div>
 </div>
