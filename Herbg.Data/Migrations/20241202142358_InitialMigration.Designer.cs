@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Herbg.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241129054440_InitialMigration")]
+    [Migration("20241202142358_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -34,7 +34,6 @@ namespace Herbg.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
