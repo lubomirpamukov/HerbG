@@ -1,7 +1,9 @@
 using Herbg.Data;
+using Herbg.Extensions;
 using Herbg.Infrastructure;
 using Herbg.Infrastructure.Interfaces;
 using Herbg.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using NuGet.Protocol.Core.Types;
@@ -26,7 +28,9 @@ namespace Herbg
                 options.SignIn.RequireConfirmedAccount = false;
                 options.SignIn.RequireConfirmedEmail = false;
             })
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped(typeof(IRepositroy<>), typeof(Repository<>));
 
@@ -50,12 +54,23 @@ namespace Herbg
             app.UseAuthorization();
 
             app.MapStaticAssets();
+
+            app.MapControllerRoute(
+                name: "areas",
+            pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
             app.MapRazorPages()
                .WithStaticAssets();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                ApplicationDbInitializer.SeedAdminUser(services);
+            }
 
             app.Run();
         }
