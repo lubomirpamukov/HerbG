@@ -17,6 +17,7 @@ namespace Herbg.Controllers
         public async Task<IActionResult> Index()
         {
             var products = await _context.Products
+                .Where(p => p.IsDeleted == false)
                 .Select(p => new ProductCardViewModel 
                 {
                     Id = p.Id,
