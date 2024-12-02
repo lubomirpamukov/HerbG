@@ -11,9 +11,8 @@ namespace Herbg.Models;
 
 public class ApplicationUser : IdentityUser
 {
-    [Required]
     [MaxLength(UserAddressMaxLength)]
-    public string Address { get; set; } = null!;
+    public string? Address { get; set; } = null!;
 
     [Required]
     public bool IsDeleted { get; set; }
