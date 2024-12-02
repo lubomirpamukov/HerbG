@@ -17,7 +17,7 @@ public class OrderController : Controller
         _context = context;
         _userManager = userManager;
     }
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
         return NotFound();
     }
