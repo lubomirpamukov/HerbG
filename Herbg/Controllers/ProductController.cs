@@ -1,4 +1,5 @@
 ﻿using Herbg.Data;
+using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Product;
 using Herbg.ViewModels.Review;
 using Microsoft.AspNetCore.Mvc;
@@ -6,27 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class ProductController : Controller
+public class ProductController(ApplicationDbContext dbcontext,IProductService productService) : Controller
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ApplicationDbContext _context = dbcontext;
+    private readonly IProductService _productService = productService;
 
-    public ProductController(ApplicationDbContext dbcontext)
-    {
-        _context = dbcontext;
-    }
     public async Task<IActionResult> Index()
     {
-        var products = await _context.Products
-            .Where(p => p.IsDeleted == false)
-            .Select(p => new ProductCardViewModel 
-            {
-                Id = p.Id,
-                Name = p.Name,
-                ImagePath = p.ImagePath,
-                Description = p.Description,
-                Price = p.Price
-            })
-            .ToArrayAsync();
+        var products = await _productService.GetAllProductsAsync();
 
 
         return View(products);

@@ -19,6 +19,7 @@ public class ProductService(IRepositroy<Product> product) : IProductService
     {
         var products = await _product
              .GetAllAttachedAsync()
+             .Where(p => p.IsDeleted == false)
              .Select(p => new ProductCardViewModel
              {
                  Id = p.Id,
@@ -31,7 +32,7 @@ public class ProductService(IRepositroy<Product> product) : IProductService
         return products;
     }
 
-    public async Task<Product> GetProductByIdAync(int productId)
+    public async Task<Product> GetProductByIdAsync(int productId)
     {
         var productToAdd = await _product.FindByIdAsync(productId);
 

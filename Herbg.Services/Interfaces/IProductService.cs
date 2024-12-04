@@ -10,7 +10,7 @@ namespace Herbg.Services.Interfaces;
 
 public interface IProductService
 {
-    public Task<Product> GetProductByIdAync(int productId);
+    public Task<Product> GetProductByIdAsync(int productId);
 
     public Task<ICollection<ProductCardViewModel>> GetAllProductsAsync();
 }
