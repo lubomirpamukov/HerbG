@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Herbg.Data\Herbg.Data.csproj" />
+    <ProjectReference Include="..\Herbg.Infrastructure\Herbg.Infrastructure.csproj" />
+    <ProjectReference Include="..\Herbg.ViewModels\Herbg.ViewModels.csproj" />
+  </ItemGroup>
+
 </Project>
