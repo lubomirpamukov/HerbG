@@ -32,7 +32,12 @@ namespace Herbg
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddControllersWithViews();
+
+            //Add generic repository
             builder.Services.AddScoped(typeof(IRepositroy<>), typeof(Repository<>));
+           
+            //Adding services extension method
+            builder.Services.AddApplicationServices();
 
             var app = builder.Build();
 
