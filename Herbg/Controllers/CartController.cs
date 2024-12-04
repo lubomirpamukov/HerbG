@@ -107,6 +107,17 @@ namespace Herbg.Controllers
                 .Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.ClientId == clientId);
 
+            if (cart == null) 
+            {
+                var newCart = new Cart
+                {
+                    ClientId = clientId!
+                };
+
+                _context.Carts.Add(newCart);
+                await _context.SaveChangesAsync();
+            }
+
             var cartItemCount = cart?.CartItems?.Sum(ci => ci.Quantity) ?? 0;
             return Json(cartItemCount);  // Returns the count as JSON
         }
