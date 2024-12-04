@@ -45,4 +45,28 @@ public class CartService(IRepositroy<Cart> cart) : ICarService
 
         return clientCart!;
     }
+
+    public async Task<bool> RemoveCartItemAsync(string clientId, int productId)
+    {
+        // Load the cart with its items in a single query
+        var clientCart = await _cart.GetAllAttachedAsync()
+            .Include(c => c.CartItems)
+            .FirstOrDefaultAsync(c => c.ClientId == clientId);
+
+        if (clientCart == null)
+        {
+            return false;
+        }
+
+        var productToRemove = clientCart.CartItems.FirstOrDefault(ci => ci.ProductId.Equals(productId));
+
+        if (productToRemove == null)
+        {
+            return false;
+        }
+
+        clientCart.CartItems.Remove(productToRemove);
+        await _cart.UpdateAsync(clientCart);
+        return true;
+    }
 }

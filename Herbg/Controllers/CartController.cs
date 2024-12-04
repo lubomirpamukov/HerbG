@@ -54,28 +54,17 @@ namespace Herbg.Controllers
                 return Unauthorized(); 
             }
 
-            // Load the cart with its items in a single query
-            var clientCart = await _context.Carts
-                .Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.ClientId == clientId);
+            var IsItemRemoved = await _carService.RemoveCartItemAsync(clientId, id);
 
-            if (clientCart == null)
+            if (IsItemRemoved)
             {
-                return NotFound(); // Cart not found
+                return RedirectToAction("Index", "Cart");
             }
-
-            var productToRemove = clientCart.CartItems.FirstOrDefault(ci => ci.ProductId.Equals(id));
-
-            if (productToRemove == null)
+            else 
             {
-                return NotFound(); 
+                return NotFound();
             }
-
-            _context.CartItems.Remove(productToRemove);
-            await _context.SaveChangesAsync();
-
             
-            return RedirectToAction("Index", "Cart");
         }
 
         public async Task<IActionResult> GetCartItemCount()

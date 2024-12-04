@@ -10,4 +10,11 @@ namespace Herbg.Services.Interfaces;
 public interface ICarService
 {
     public Task<CartViewModel> GetUserCartAsync(string clientId);
+
+    public Task<bool> RemoveCartItemAsync(string clientId, int productId);
+
+    public Task<int> GetCartItemsCount(string clientId) 
+    {
+        
+    }
 }
