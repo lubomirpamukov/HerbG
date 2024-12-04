@@ -13,6 +13,13 @@
 <div class="container mt-5">
     <h2 class="text-center mb-4">Shop</h2>
 
+    <!-- Add Product Button -->
+    <div class="mb-4 text-center">
+        <a asp-area="Admin" asp-controller="Home" asp-action="AddProduct" class="btn btn-primary">
+            Add Product
+        </a>
+    </div>
+
     <!-- Product Grid -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         @foreach (var product in Model)
