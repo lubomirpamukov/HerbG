@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Herbg.Controllers
+namespace Herbg.Controllers;
+
+public class SearchController : Controller
 {
-    public class SearchController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }
