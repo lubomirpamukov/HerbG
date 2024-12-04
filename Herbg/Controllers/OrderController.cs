@@ -1,5 +1,6 @@
 ﻿using Herbg.Data;
 using Herbg.Models;
+using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Order;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,13 +10,15 @@ namespace Herbg.Controllers;
 
 public class OrderController : Controller
 {
+    private readonly IOrderService _orderService;
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public OrderController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public OrderController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOrderService order)
     {
         _context = context;
         _userManager = userManager;
+        _orderService = order;
     }
     public IActionResult Index()
     {
@@ -31,39 +34,14 @@ public class OrderController : Controller
             return NotFound();
         }
 
-        var clientCart = await _context.Clients
-            .Where(c => c.Id == clientId)
-            .Include(c => c.Cart)
-            .ThenInclude(c => c.CartItems)
-            .ThenInclude(ci => ci.Product)
-            .FirstOrDefaultAsync();
+        var clientCartView = await _orderService.GetCheckout(clientId, cartId);
 
-        if (clientCart == null)
+        if (clientCartView == null) 
         {
             return NotFound();
         }
-
-        var totalProductPrice = clientCart.Cart.CartItems.Sum(c => c.Price * c.Quantity);
-
-        var checkoutView = new CheckoutViewModel
-        {
-            Address = clientCart.Address,
-            CartItems = clientCart.Cart.CartItems.Select(c => new ViewModels.Cart.CartItemViewModel
-            {
-                ProductId = c.ProductId,
-                ImagePath = c.Product.ImagePath,
-                Name = c.Product.Name,
-                Price = c.Price,
-                Quantity = c.Quantity
-            }).ToList(),
-            Subtotal = totalProductPrice,
-            ShippingCost = 10,
-            Total = totalProductPrice + 10
-        };
         
-
-        
-        return View(checkoutView);
+        return View(clientCartView);
     }
 
     public async Task<IActionResult> ConfirmOrder(CheckoutViewModel model)
