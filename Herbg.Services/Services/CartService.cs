@@ -12,9 +12,61 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Services.Services;
 
-public class CartService(IRepositroy<Cart> cart) : ICarService
+public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product) : ICartService
 {
     private readonly IRepositroy<Cart> _cart = cart;
+    private readonly IRepositroy<Product> _product = product;
+
+    public async Task<bool> AddItemToCartAsync(string clientId, int productId, int quantity)
+    {
+        var productToAdd = await _product.FindByIdAsync(productId);
+        if (productToAdd == null) 
+        {
+            return false;
+        }
+
+        var clientCart = await _cart
+               .GetAllAttachedAsync()
+               .Include(c => c.CartItems)
+               .FirstOrDefaultAsync(c => c.ClientId == clientId);
+
+        if (clientCart == null)
+        {
+            var newCart = new Cart
+            {
+                ClientId = clientId!
+            };
+
+            await _cart.AddAsync(newCart);
+            clientCart = newCart;
+        }
+
+        var existingCartItem = clientCart.CartItems.FirstOrDefault(ci => ci.ProductId == productToAdd.Id);
+
+        if (existingCartItem != null)
+        {
+            // If the product is already in the cart, increase the quantity
+            existingCartItem.Quantity += quantity;
+        }
+        else
+        {
+            // Add new item to the cart
+            var cartItemToAdd = new CartItem
+            {
+                CartId = clientCart.Id,
+                ProductId = productToAdd.Id,
+                Quantity = quantity,
+                Price = productToAdd.Price
+            };
+
+            clientCart.CartItems.Add(cartItemToAdd);
+        }
+
+        await _cart.UpdateAsync(clientCart);
+
+        return true;
+
+    }
 
     public async Task<int> GetCartItemsCountAsync(string clientId)
     {

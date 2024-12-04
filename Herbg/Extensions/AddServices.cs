@@ -10,7 +10,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddScoped<ICarService, CartService>();
+        services.AddScoped<ICartService, CartService>();
+        services.AddScoped<IProductService, ProductService>();
 
         return services;
     }

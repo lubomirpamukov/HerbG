@@ -13,15 +13,15 @@ namespace Herbg.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ICarService _carService;
+        private readonly ICartService _cartService;
 
         public CartController(ApplicationDbContext context,
                               UserManager<ApplicationUser> userManager,
-                              ICarService cartService)
+                              ICartService cartService)
         {
             _context = context;
             _userManager = userManager;
-            _carService = cartService;
+            _cartService = cartService;
         }
 
         public async Task<IActionResult> Index()
@@ -38,7 +38,7 @@ namespace Herbg.Controllers
 
             if (User?.Identity?.IsAuthenticated ?? false) 
             {
-                var cartViewModel = await _carService.GetUserCartAsync(clientId);
+                var cartViewModel = await _cartService.GetUserCartAsync(clientId);
                 return View(cartViewModel);
             }
 
@@ -54,7 +54,7 @@ namespace Herbg.Controllers
                 return Unauthorized(); 
             }
 
-            var IsItemRemoved = await _carService.RemoveCartItemAsync(clientId, id);
+            var IsItemRemoved = await _cartService.RemoveCartItemAsync(clientId, id);
 
             if (IsItemRemoved)
             {
@@ -76,7 +76,7 @@ namespace Herbg.Controllers
                 return NotFound();
             }
 
-            var cartItemCount = await _carService.GetCartItemsCountAsync(clientId);
+            var cartItemCount = await _cartService.GetCartItemsCountAsync(clientId);
             return Json(cartItemCount);  // Returns the count as JSON
         }
 
@@ -91,55 +91,17 @@ namespace Herbg.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var productToAdd = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
-            if (productToAdd == null)
-            {
-                // Product not found
-                return NotFound();
-            }
 
             if (User?.Identity?.IsAuthenticated ?? false) 
             {
-                var clientCart = await _context.Carts
-                .Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.ClientId == clientId);
-
-                if (clientCart == null)
+                //User is registered
+                var isProducAdded = await _cartService.AddItemToCartAsync(clientId, id, quantity);
+                if (!isProducAdded)
                 {
-                    var newCart = new Cart
-                    {
-                        ClientId = clientId!
-                    };
-
-                    _context.Carts.Add(newCart);
-                    await _context.SaveChangesAsync();
-                    clientCart = newCart;
+                    return NotFound();
                 }
 
-                var existingCartItem = clientCart.CartItems.FirstOrDefault(ci => ci.ProductId == productToAdd.Id);
-
-                if (existingCartItem != null)
-                {
-                    // If the product is already in the cart, increase the quantity
-                    existingCartItem.Quantity += quantity;
-                }
-                else
-                {
-                    // Add new item to the cart
-                    var cartItemToAdd = new CartItem
-                    {
-                        CartId = clientCart.Id,
-                        ProductId = productToAdd.Id,
-                        Quantity = quantity,
-                        Price = productToAdd.Price
-                    };
-
-                    clientCart.CartItems.Add(cartItemToAdd);
-                }
-
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Index","Product");
+                return RedirectToAction("Index", "Product");
             }
 
             return RedirectToAction("Index");
