@@ -4,6 +4,8 @@ using Herbg.ViewModels.Cart;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Herbg.Services.Interfaces;
+
 
 namespace Herbg.Controllers
 {
@@ -11,11 +13,15 @@ namespace Herbg.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ICarService _carService;
 
-        public CartController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public CartController(ApplicationDbContext context,
+                              UserManager<ApplicationUser> userManager,
+                              ICarService cartService)
         {
             _context = context;
             _userManager = userManager;
+            _carService = cartService;
         }
 
         public async Task<IActionResult> Index()
@@ -32,39 +38,11 @@ namespace Herbg.Controllers
 
             if (User?.Identity?.IsAuthenticated ?? false) 
             {
-                var clientCart = await _context.Carts
-                    .Where(c => c.ClientId == clientId)
-                    .Select(c => new CartViewModel 
-                    {
-                        Id = c.Id,
-                       CartItems = c.CartItems.Select(ci => new CartItemViewModel 
-                       {
-                            ProductId = ci.ProductId,
-                            ImagePath = ci.Product.ImagePath,
-                            Name = ci.Product.Name,
-                            Price = ci.Price,
-                            Quantity = ci.Quantity
-                       }).ToList()
-                    })
-                    .FirstOrDefaultAsync();
-
-                
-
-                if (clientCart == null) 
-                {
-                    var newCart = new Cart
-                    {
-                        ClientId = clientId!
-                    };
-
-                    _context.Carts.Add(newCart);
-                    await _context.SaveChangesAsync();
-                }
-
-                return View(clientCart);
+                var cartViewModel = await _carService.GetUserCartAsync(clientId);
+                return View(cartViewModel);
             }
 
-            return View();
+            return NotFound();
         }
 
         public async Task<IActionResult> RemoveItem(int id)
