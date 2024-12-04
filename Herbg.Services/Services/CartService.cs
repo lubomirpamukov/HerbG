@@ -15,6 +15,28 @@ namespace Herbg.Services.Services;
 public class CartService(IRepositroy<Cart> cart) : ICarService
 {
     private readonly IRepositroy<Cart> _cart = cart;
+
+    public async Task<int> GetCartItemsCountAsync(string clientId)
+    {
+        var cart = await _cart.GetAllAttachedAsync()
+                .Include(c => c.CartItems)
+                .FirstOrDefaultAsync(c => c.ClientId == clientId);
+
+        if (cart == null)
+        {
+            var newCart = new Cart
+            {
+                ClientId = clientId!
+            };
+
+           await _cart.AddAsync(newCart);
+        }
+
+        var cartItemCount = cart?.CartItems?.Sum(ci => ci.Quantity) ?? 0;
+
+        return cartItemCount;
+    }
+
     public async Task<CartViewModel> GetUserCartAsync(string clientId)
     {
         var clientCart = await _cart.GetAllAttachedAsync()

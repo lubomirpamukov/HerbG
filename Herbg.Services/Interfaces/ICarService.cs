@@ -13,8 +13,5 @@ public interface ICarService
 
     public Task<bool> RemoveCartItemAsync(string clientId, int productId);
 
-    public Task<int> GetCartItemsCount(string clientId) 
-    {
-        
-    }
+    public Task<int> GetCartItemsCountAsync(string clientId);
 }

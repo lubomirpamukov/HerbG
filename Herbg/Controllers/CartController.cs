@@ -70,22 +70,13 @@ namespace Herbg.Controllers
         public async Task<IActionResult> GetCartItemCount()
         {
             var clientId = _userManager.GetUserId(User);
-            var cart = await _context.Carts
-                .Include(c => c.CartItems)
-                .FirstOrDefaultAsync(c => c.ClientId == clientId);
 
-            if (cart == null) 
+            if (string.IsNullOrWhiteSpace(clientId))
             {
-                var newCart = new Cart
-                {
-                    ClientId = clientId!
-                };
-
-                _context.Carts.Add(newCart);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
 
-            var cartItemCount = cart?.CartItems?.Sum(ci => ci.Quantity) ?? 0;
+            var cartItemCount = await _carService.GetCartItemsCountAsync(clientId);
             return Json(cartItemCount);  // Returns the count as JSON
         }
 
