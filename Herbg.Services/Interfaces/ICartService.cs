@@ -17,5 +17,7 @@ public interface ICartService
 
     public Task<bool>AddItemToCartAsync(string clientId, int productId, int quantity);
 
-    public Task<bool> UpdateCartItemQuantityAsync(string clientId, int productId, int quantity);
+    public Task<bool>UpdateCartItemQuantityAsync(string clientId, int productId, int quantity);
+
+    public Task<bool> MoveCartItemToWishListAsync(string clinetId, int productId);
 }

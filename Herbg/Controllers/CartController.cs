@@ -137,22 +137,12 @@ namespace Herbg.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            //Check if product is in client cart
-            var isProductInClientCart = await _context.CartItems
-                .Include(x => x.Cart)
-                .FirstOrDefaultAsync(ci => ci.ProductId == id && ci.Cart.ClientId == clientId);
-            if (isProductInClientCart == null)
+            var isMovedToWishlist = await _cartService.MoveCartItemToWishListAsync(clientId, id);
+
+            if (!isMovedToWishlist) 
             {
-                //There is no product matching this id in client cart
                 return NotFound();
             }
-
-            //Add to wishlist
-            var newWishlistItem = new Wishlist { ClientId = clientId, ProductId = isProductInClientCart.ProductId };
-            await _context.Wishlists.AddAsync(newWishlistItem);
-            //Remove from cart
-            _context.CartItems.Remove(isProductInClientCart);
-            await _context.SaveChangesAsync();
 
             return RedirectToAction("Index", "Cart");
         }

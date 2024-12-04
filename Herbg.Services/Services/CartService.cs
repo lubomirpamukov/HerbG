@@ -12,10 +12,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Services.Services;
 
-public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product) : ICartService
+public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product, IRepositroy<Wishlist>wishlist) : ICartService
 {
     private readonly IRepositroy<Cart> _cart = cart;
     private readonly IRepositroy<Product> _product = product;
+    private readonly IRepositroy<Wishlist> _wishlist = wishlist;
 
     public async Task<bool> AddItemToCartAsync(string clientId, int productId, int quantity)
     {
@@ -118,6 +119,35 @@ public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product) :
         }
 
         return clientCart!;
+    }
+
+    public async Task<bool> MoveCartItemToWishListAsync(string clinetId, int productId)
+    {
+        var clientCart = await _cart.GetAllAttachedAsync()
+                .Where(c => c.ClientId == clinetId)
+                .Include(c => c.CartItems)
+                .FirstOrDefaultAsync();
+        if (clientCart == null)
+        {
+            //There is no client card
+            return false;
+        }
+
+        var cartItem = clientCart.CartItems.Where(ci => ci.ProductId == productId).FirstOrDefault();
+
+        if (cartItem == null) 
+        {
+            //Client cart is empty
+            return false;
+        }
+
+        //Add to wishlist
+        var newWishlistItem = new Wishlist { ClientId = clinetId, ProductId = cartItem.ProductId };
+        await _wishlist.AddAsync(newWishlistItem);
+        //Remove from cart
+        clientCart.CartItems.Remove(cartItem);
+        await _cart.UpdateAsync(clientCart);
+        return true;
     }
 
     public async Task<bool> RemoveCartItemAsync(string clientId, int productId)
