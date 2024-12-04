@@ -1,0 +1,24 @@
+﻿@using Herbg.ViewModels.Product
+@model IEnumerable<ProductCardViewModel>
+
+<style>
+    .card-img-top {
+        width: 100%;
+        height: 12rem;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+</style>
+
+<div class="container mt-5">
+
+    <h2 class="text-center mb-4">Shop</h2>
+
+    <!-- Product Grid -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var product in Model)
+        {
+            @await Html.PartialAsync("_ProductPartialView", product)
+        }
+    </div>
+</div>
