@@ -1,5 +1,6 @@
 ﻿using Herbg.Data;
 using Herbg.Models;
+using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Review;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,16 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class ReviewController : Controller
+public class ReviewController(ApplicationDbContext context, UserManager<ApplicationUser> userManager,IReviewService reviewService) : Controller
 {
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IReviewService _reviewService = reviewService;
+    private readonly ApplicationDbContext _context = context;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
 
-    public ReviewController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
-    {
-        _context = context;
-        _userManager = userManager;
-    }
+    
     public IActionResult Index()
     {
         return View();
@@ -33,9 +31,8 @@ public class ReviewController : Controller
             return RedirectToAction("Login", "Account");
         }
 
-        var client = await  _context.Clients.FindAsync(clientId);
-        //Create a view form
-        var viewForm = new ReviewViewModel { Id = id,ReviewerName = client?.Email ?? "Anonymouse", };
+        var viewForm = await _reviewService.GetReviewFormAsync(clientId,id);
+        
         return View(viewForm);
     }
 
@@ -50,29 +47,12 @@ public class ReviewController : Controller
             return RedirectToAction("Login", "Account");
         }
 
-        var client = await _context.Clients.FindAsync(clientId);
+        var isReviewCreated = await _reviewService.UpdateReviewAsync(clientId, model);
 
-        //Check if customer wrote a review for this product
-        var customerReview = await _context.Reviews
-            .FirstOrDefaultAsync(review => review.ProductId == model.Id && review.ClientId == clientId);
-        if (customerReview != null)
+        if (!isReviewCreated)
         {
-            //Delete old review
-            _context.Reviews.Remove(customerReview);
-            await _context.SaveChangesAsync();
+            return NotFound();
         }
-
-        //Create a review from the viewModel
-        var newReview = new Review
-        {
-            ClientId = clientId,
-            Description = model.Description,
-            ProductId = model.Id,
-            Rating = model.Rating,
-        };
-
-        _context.Reviews.Add(newReview);
-        await _context.SaveChangesAsync();
 
         return RedirectToAction("Details", "Product",new {id = model.Id });
     }
