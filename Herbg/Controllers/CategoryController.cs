@@ -1,30 +1,18 @@
 ﻿using Herbg.Data;
+using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Category;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class CategoryController : Controller
+public class CategoryController(ICategoryService category) : Controller
 {
-    private readonly ApplicationDbContext _context;
-
-    public CategoryController(ApplicationDbContext dbContext)
-    {
-        _context = dbContext;
-    }
+    private readonly ICategoryService _category = category;
+    
     public async Task<IActionResult> Index()
     {
-        var categories = await _context.Categories
-            .Select(c => new CategoryCardViewModel 
-            {
-                Id = c.Id,
-                Name = c.Name,
-                ImagePath = c.ImagePath,
-                Description = c.Description
-            })
-            .ToArrayAsync();
-
+        var categories = await _category.GetAllCategoriesAsync();
         return View(categories);
     }
 }
