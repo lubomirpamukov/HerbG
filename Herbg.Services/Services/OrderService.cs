@@ -16,6 +16,35 @@ public class OrderService(IRepositroy<Cart> cart, IRepositroy<Order>order) : IOr
 {
     private readonly IRepositroy<Order> _order = order;
     private readonly IRepositroy<Cart> _cart = cart;
+
+    public async Task<ICollection<OrderSummaryViewModel>> GetAllOrdersAsync(string clientId)
+    {
+        //Get user orders 
+        var orders = await _order
+            .GetAllAttachedAsync()
+        .Where(o => o.ClientId == clientId)
+        .Include(o => o.ProductOrders)
+        .ToListAsync();
+
+        //Create view model
+        List<OrderSummaryViewModel> viewModel = new List<OrderSummaryViewModel>();
+
+        foreach (var order in orders)
+        {
+            var newOrder = new OrderSummaryViewModel
+            {
+                OrderId = order.Id,
+                Date = order.Date,
+                TotalAmount = order.TotalAmount,
+                PaymentMethod = order.PaymentMethod.ToString(),
+                TotalItems = order.ProductOrders.Sum(po => po.Quantity)
+            };
+            viewModel.Add(newOrder);
+        }
+
+        return viewModel;
+    }
+
     public async Task<CheckoutViewModel> GetCheckout(string clientId,string cartId)
     {
         var clientCart = await _cart

@@ -14,4 +14,6 @@ public interface IOrderService
     public Task<string> GetOrderConfirmed(string clientId, CheckoutViewModel model);
 
     public Task<OrderDetailsViewModel> GetOrderDetailsAsync(string orderId);
+
+    public Task<ICollection<OrderSummaryViewModel>>GetAllOrdersAsync(string clientId);
 }

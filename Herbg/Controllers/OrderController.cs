@@ -79,29 +79,9 @@ public class OrderController(UserManager<ApplicationUser> userManager, IOrderSer
             return NotFound();
         }
 
-        //Get user orders 
-        var orders = await _context.Orders
-        .Where(o => o.ClientId == clientId)
-        .Include(o => o.ProductOrders)
-        .ToListAsync();
+        var ordersViewModel = await _orderService.GetAllOrdersAsync(clientId);
 
-        //Create view model
-        List<OrderSummaryViewModel> viewModel = new List<OrderSummaryViewModel>();
-
-        foreach (var order in orders) 
-        {
-            var newOrder = new OrderSummaryViewModel
-            {
-                OrderId = order.Id,
-                Date = order.Date,
-                TotalAmount = order.TotalAmount,
-                PaymentMethod = order.PaymentMethod.ToString(),
-                TotalItems = order.ProductOrders.Sum(po => po.Quantity)
-            };
-            viewModel.Add(newOrder);
-        }
-
-        return View(viewModel);
+        return View(ordersViewModel);
     }
 
     public IActionResult ThankYou(string orderNumber)
