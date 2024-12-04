@@ -143,4 +143,24 @@ public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product) :
         await _cart.UpdateAsync(clientCart);
         return true;
     }
+
+    public async Task<bool> UpdateCartItemQuantityAsync(string clientId, int productId, int quantity)
+    {
+        var clientCart = await _cart
+            .GetAllAttachedAsync()
+            .Include(c => c.CartItems)
+            .FirstOrDefaultAsync(ci => ci.ClientId == clientId && ci.CartItems.Any(p => p.ProductId == productId));
+
+        if (clientCart == null)
+        {
+            return false;
+        }
+
+        var itemToUpdate = clientCart.CartItems.FirstOrDefault(c => c.ProductId == productId);
+
+        itemToUpdate!.Quantity = quantity;
+        await _cart.UpdateAsync(clientCart);
+
+        return true;
+    }
 }

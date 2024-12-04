@@ -116,21 +116,15 @@ namespace Herbg.Controllers
                 return NotFound();
             }
 
-            var clientCartItem = await _context.Carts.Include(c => c.CartItems)
-                .FirstOrDefaultAsync(ci => ci.ClientId == clientId && ci.CartItems.Any(p => p.ProductId == id));
-
-            if (clientCartItem == null)
+            var isQuantityUpdated = await _cartService.UpdateCartItemQuantityAsync(clientId, id, quantity);
+            if (!isQuantityUpdated)
             {
                 return NotFound();
             }
-
-            var itemToUpdate = clientCartItem.CartItems.FirstOrDefault(c => c.ProductId == id);
-
-            itemToUpdate!.Quantity = quantity;
-            _context.CartItems.Update(itemToUpdate);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index");
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         public async Task<IActionResult> MoveToWishlist(int id) 
