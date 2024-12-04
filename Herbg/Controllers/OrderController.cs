@@ -8,10 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class OrderController(UserManager<ApplicationUser> userManager, IOrderService order, ApplicationDbContext context) : Controller
+public class OrderController(UserManager<ApplicationUser> userManager, IOrderService order) : Controller
 {
     private readonly IOrderService _orderService = order;
-    private readonly ApplicationDbContext _context = context;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
 
     public IActionResult Index()

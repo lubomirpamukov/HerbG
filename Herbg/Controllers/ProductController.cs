@@ -7,9 +7,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class ProductController(ApplicationDbContext dbcontext,IProductService productService) : Controller
+public class ProductController(IProductService productService) : Controller
 {
-    private readonly ApplicationDbContext _context = dbcontext;
     private readonly IProductService _productService = productService;
 
     public async Task<IActionResult> Index()

@@ -8,10 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class ReviewController(ApplicationDbContext context, UserManager<ApplicationUser> userManager,IReviewService reviewService) : Controller
+public class ReviewController(UserManager<ApplicationUser> userManager,IReviewService reviewService) : Controller
 {
     private readonly IReviewService _reviewService = reviewService;
-    private readonly ApplicationDbContext _context = context;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
 
     
