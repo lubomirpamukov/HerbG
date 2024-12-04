@@ -17,14 +17,14 @@
                
                 @if (User.IsInRole("Admin"))
                 {
-                    <form asp-controller="Home" asp-action="Delete" method="post">
+                    <form  asp-area="Admin" asp-controller="Home" asp-action="Delete" method="post">
                         <input type="hidden" name="productId" value="@Model.Id" />
                         <button type="submit" class="btn btn-danger">
                             Delete
                         </button>
                     </form>
 
-                    <form asp-controller="Home" asp-action="Edit" method="post">
+                    <form asp-area="Admin" asp-controller="Home" asp-action="EditProduct" method="get">
                         <input type="hidden" name="productId" value="@Model.Id" />
                         <button type="submit" class="btn btn-secondary"> Edit </button>
                     </form>
