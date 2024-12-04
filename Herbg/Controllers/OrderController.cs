@@ -54,49 +54,13 @@ public class OrderController : Controller
             return NotFound();
         }
 
-        // Fetch the cart and associated items
-        var cartToRemove = await _context.Carts
-            .Include(c => c.CartItems)
-            .ThenInclude(ci => ci.Product) // Ensure Product details are included if needed for validation
-            .FirstOrDefaultAsync(c => c.ClientId == clientId);
-
-        if (cartToRemove == null)
+        var orderId = await _orderService.GetOrderConfirmed(clientId, model);
+        if (orderId == null)
         {
             return NotFound();
         }
+        return RedirectToAction("ThankYou", "Order", new { orderNumber = orderId });
 
-        // Calculate the total price dynamically from cart items
-        decimal calculatedTotal = cartToRemove.CartItems.Sum(item => item.Price * item.Quantity);
-
-        // Create the new order
-        var newOrder = new Order
-        {
-            ClientId = clientId,
-            Address = model.Address,
-            PaymentMethod = model.PaymentMethod,
-            TotalAmount = calculatedTotal,
-            ProductOrders = new List<ProductOrder>()
-        };
-
-        // Convert cart items to ProductOrder entries
-        foreach (var item in cartToRemove.CartItems)
-        {
-            var newItem = new ProductOrder
-            {
-                ProductId = item.ProductId,
-                Price = item.Price,
-                Quantity = item.Quantity
-            };
-
-            newOrder.ProductOrders.Add(newItem);
-        }
-
-        // Save the new order and remove the cart
-        _context.Orders.Add(newOrder);
-        _context.Carts.Remove(cartToRemove);
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction("ThankYou", "Order", new { orderNumber = newOrder.Id });
     }
 
 

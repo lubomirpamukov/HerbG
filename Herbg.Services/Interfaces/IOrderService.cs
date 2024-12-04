@@ -10,4 +10,6 @@ namespace Herbg.Services.Interfaces;
 public interface IOrderService
 {
     public Task<CheckoutViewModel> GetCheckout(string clientId,string cartId);
+
+    public Task<string> GetOrderConfirmed(string clientId, CheckoutViewModel model);
 }
