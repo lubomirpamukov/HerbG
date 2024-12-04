@@ -1,0 +1,80 @@
+﻿@model Herbg.ViewModels.Product.CreateProductViewModel
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="EditProduct" asp-controller="Home" asp-area="Admin" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
+    <!-- Product Name -->
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Product Name</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <!-- Price -->
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label">Price</label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <!-- Description -->
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label">Description</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <!-- Current Image -->
+    <div class="mb-3">
+        <label class="form-label">Current Image</label>
+        <div>
+            @if (!string.IsNullOrEmpty(Model.ImagePath))
+            {
+                <img src="@Model.ImagePath" alt="@Model.Name picture" class="img-thumbnail" style="max-height: 150px;" />
+            }
+            else
+            {
+                <p>No image available</p>
+            }
+        </div>
+    </div>
+
+    <!-- Upload New Image -->
+    <div class="mb-3">
+        <label class="form-label mt-2">Upload New Image</label>
+        <input type="file" name="ImageFile" class="form-control" />
+    </div>
+
+    <!-- Category Dropdown -->
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label">Category</label>
+        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
+            <option value="">Select a Category</option> <!-- Default option -->
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    <!-- Manufacturer Dropdown -->
+    <div class="mb-3">
+        <label asp-for="ManufactorerId" class="form-label">Manufacturer</label>
+        <select asp-for="ManufactorerId" class="form-select" asp-items="ViewBag.Manufacturers">
+            <option value="">Select a Manufacturer</option> <!-- Default option -->
+        </select>
+        <span asp-validation-for="ManufactorerId" class="text-danger"></span>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
