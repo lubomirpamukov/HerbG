@@ -20,7 +20,7 @@
                         <h5 class="card-title">@category.Name</h5>
                         <p class="card-text">@category.Description</p>
                         <form asp-controller="Product" asp-action="ProductByCategory" method="post" class="mt-auto">
-                            <input type="hidden" name="id" value="@category.Id" />
+                            <input type="hidden" name="categoryId" value="@category.Id" />
                             <button type="submit" class="btn btn-primary mt-auto">Shop Now</button>
                         </form>
                     </div>
