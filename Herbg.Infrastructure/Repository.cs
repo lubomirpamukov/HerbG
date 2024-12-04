@@ -14,10 +14,10 @@ public class Repository<T> : IRepositroy<T> where T : class
     private readonly ApplicationDbContext _context;
     private readonly DbSet<T> _dbSet;
 
-    public Repository(ApplicationDbContext context, DbSet<T>dbSet)
+    public Repository(ApplicationDbContext context)
     {
         _context = context;
-        _dbSet = dbSet;
+        _dbSet = _context.Set<T>();
     }
 
     public async Task<bool> AddAsync(T entity)
