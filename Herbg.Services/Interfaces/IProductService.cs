@@ -13,4 +13,6 @@ public interface IProductService
     public Task<Product> GetProductByIdAsync(int productId);
 
     public Task<ICollection<ProductCardViewModel>> GetAllProductsAsync();
+
+    public Task<ProductDetailsViewModel> GetProductDetailsAsync(int productId);
 }

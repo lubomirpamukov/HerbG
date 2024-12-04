@@ -2,6 +2,7 @@
 using Herbg.Models;
 using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Product;
+using Herbg.ViewModels.Review;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -37,5 +38,37 @@ public class ProductService(IRepositroy<Product> product) : IProductService
         var productToAdd = await _product.FindByIdAsync(productId);
 
         return productToAdd!;
+    }
+
+    public async Task<ProductDetailsViewModel> GetProductDetailsAsync(int productId)
+    {
+        var product = await _product
+            .GetAllAttachedAsync()
+            .Where(p => p.Id == productId)
+            .Include(p => p.Category)
+            .Include(p => p.Manufactorer)
+            .Include(p => p.Reviews)
+            .ThenInclude(r => r.Client)
+            .Select(p => new ProductDetailsViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Category = p.Category.Name,
+                Description = p.Description,
+                ImagePath = p.ImagePath,
+                Price = p.Price,
+                Manufactorer = p.Manufactorer.Name,
+                Reviews = p.Reviews.Select(r => new ReviewViewModel
+                {
+                    Id = r.Id,
+                    Description = r.Description!,
+                    Rating = r.Rating,
+                    ReviewerName = r.Client.UserName!
+
+                }).ToList()
+            })
+            .FirstOrDefaultAsync();
+
+        return product;
     }
 }

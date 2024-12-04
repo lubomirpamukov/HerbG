@@ -22,31 +22,7 @@ public class ProductController(ApplicationDbContext dbcontext,IProductService pr
 
     public async Task<IActionResult> Details(int id) 
     {
-        var product = await _context.Products
-            .Where(p => p.Id == id)
-            .Include(p => p.Category)
-            .Include(p => p.Manufactorer)
-            .Include(p => p.Reviews)
-            .ThenInclude(r => r.Client)
-            .Select(p => new ProductDetailsViewModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Category = p.Category.Name,
-                Description = p.Description,
-                ImagePath = p.ImagePath,
-                Price = p.Price,
-                Manufactorer = p.Manufactorer.Name,
-                Reviews = p.Reviews.Select(r => new ReviewViewModel 
-                {
-                    Id = r.Id,
-                    Description = r.Description!,
-                    Rating = r.Rating,
-                    ReviewerName = r.Client.UserName!
-                   
-                }).ToList()
-            })
-            .FirstOrDefaultAsync();
+        var product = await _productService.GetProductDetailsAsync(id);
 
         if (product == null)
         { 
