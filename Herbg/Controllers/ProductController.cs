@@ -35,31 +35,7 @@ public class ProductController(ApplicationDbContext dbcontext,IProductService pr
 
     public async Task<IActionResult> ProductByCategory(int categoryId) 
     {
-        var productsByCategory = await _context.Categories
-            .Where(c => c.Id == categoryId && c.IsDeleted == false)
-            .Include(p => p.Products)
-            .FirstOrDefaultAsync();
-
-        if (productsByCategory == null)
-        {
-            return NotFound();
-        }
-
-        var viewModelCollection = new List<ProductCardViewModel>();
-
-        foreach (var product in productsByCategory.Products)
-        {
-            var newProduct = new ProductCardViewModel
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                ImagePath = product.ImagePath,
-                Price = product.Price
-            };
-
-            viewModelCollection.Add(newProduct);
-        }
+        var viewModelCollection = await _productService.GetProductsByCategoryAsync(categoryId);
 
         return View(viewModelCollection);
     }

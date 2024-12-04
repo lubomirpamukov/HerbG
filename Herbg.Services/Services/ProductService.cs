@@ -71,4 +71,34 @@ public class ProductService(IRepositroy<Product> product) : IProductService
 
         return product;
     }
+
+    public async Task<ICollection<ProductCardViewModel>> GetProductsByCategoryAsync(int categoryId)
+    {
+        var productsByCategory = await _product
+            .GetAllAttachedAsync()
+            .Where(p => p.CategoryId == categoryId && p.IsDeleted == false)
+            .ToArrayAsync();
+
+        if (productsByCategory == null)
+        {
+            throw new ArgumentNullException("Category can't be null");
+        }
+
+        var viewModelCollection = new List<ProductCardViewModel>();
+
+        foreach (var product in productsByCategory)
+        {
+            var newProduct = new ProductCardViewModel
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Description = product.Description,
+                ImagePath = product.ImagePath,
+                Price = product.Price
+            };
+
+            viewModelCollection.Add(newProduct);
+        }
+        return viewModelCollection;
+    }
 }
