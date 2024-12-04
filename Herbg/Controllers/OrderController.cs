@@ -8,18 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class OrderController : Controller
+public class OrderController(UserManager<ApplicationUser> userManager, IOrderService order, ApplicationDbContext context) : Controller
 {
-    private readonly IOrderService _orderService;
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IOrderService _orderService = order;
+    private readonly ApplicationDbContext _context = context;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
 
-    public OrderController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IOrderService order)
-    {
-        _context = context;
-        _userManager = userManager;
-        _orderService = order;
-    }
     public IActionResult Index()
     {
         return NotFound();
@@ -66,38 +60,12 @@ public class OrderController : Controller
 
     public async Task<IActionResult> Details(string id) 
     {
-        //Finds order and includes all needed tables
-        var order = await _context.Orders
-            .Where(o => o.Id == id)
-            .Include(op => op.ProductOrders)
-            .ThenInclude(po => po.Product)
-            .Include(o => o.Client)
-            .FirstOrDefaultAsync();
+        var orderDetailsViewModel = await _orderService.GetOrderDetailsAsync(id);
 
-        //Check if order exist
-        if (order == null) 
+        if (orderDetailsViewModel == null) 
         {
-            return NotFound();
+            return View("Error");
         }
-
-        //Crate order view model
-        var orderDetailsViewModel = new OrderDetailsViewModel 
-        {
-            OrderId = order.Id,
-            Date = order.Date,
-            TotalAmount = order.TotalAmount,
-            CustomerName = order.Client.UserName?? "Anonymouse",
-            Address = order.Address,
-            CustomerEmail = order.Client.Email?? "Anonymouse",
-            PaymentMethod = order.PaymentMethod,
-            OrderedProducts = order.ProductOrders.Select(product => new OrderedProductViewModel 
-            {
-                Price = product.Price,
-                ProductName = product.Product.Name,
-                Quantity = product.Quantity
-
-            }).ToList(),
-        };
 
         return View(orderDetailsViewModel);
     }

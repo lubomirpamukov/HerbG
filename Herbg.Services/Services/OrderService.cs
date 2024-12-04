@@ -97,4 +97,43 @@ public class OrderService(IRepositroy<Cart> cart, IRepositroy<Order>order) : IOr
         await _cart.DeleteAsync(cartToRemove);
         return newOrder.Id;
     }
+
+    public async Task<OrderDetailsViewModel> GetOrderDetailsAsync(string orderId)
+    {
+        //Finds order and includes all needed tables
+        var order = await _order
+            .GetAllAttachedAsync()
+            .Where(o => o.Id == orderId)
+            .Include(op => op.ProductOrders)
+            .ThenInclude(po => po.Product)
+            .Include(o => o.Client)
+            .FirstOrDefaultAsync();
+
+        //Check if order exist
+        if (order == null)
+        {
+            return null;
+        }
+
+        //Crate order view model
+        var orderDetailsViewModel = new OrderDetailsViewModel
+        {
+            OrderId = order.Id,
+            Date = order.Date,
+            TotalAmount = order.TotalAmount,
+            CustomerName = order.Client.UserName ?? "Anonymouse",
+            Address = order.Address,
+            CustomerEmail = order.Client.Email ?? "Anonymouse",
+            PaymentMethod = order.PaymentMethod,
+            OrderedProducts = order.ProductOrders.Select(product => new OrderedProductViewModel
+            {
+                Price = product.Price,
+                ProductName = product.Product.Name,
+                Quantity = product.Quantity
+
+            }).ToList(),
+        };
+
+        return orderDetailsViewModel;
+    }
 }

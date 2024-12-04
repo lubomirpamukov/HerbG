@@ -9,20 +9,10 @@ using Herbg.Services.Interfaces;
 
 namespace Herbg.Controllers
 {
-    public class CartController : Controller
+    public class CartController(UserManager<ApplicationUser> userManager,ICartService cartService) : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly ICartService _cartService;
-
-        public CartController(ApplicationDbContext context,
-                              UserManager<ApplicationUser> userManager,
-                              ICartService cartService)
-        {
-            _context = context;
-            _userManager = userManager;
-            _cartService = cartService;
-        }
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly ICartService _cartService = cartService;
 
         public async Task<IActionResult> Index()
         {
