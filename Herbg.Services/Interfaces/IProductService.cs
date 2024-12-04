@@ -1,4 +1,5 @@
 ﻿using Herbg.Models;
+using Herbg.ViewModels.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,4 +11,6 @@ namespace Herbg.Services.Interfaces;
 public interface IProductService
 {
     public Task<Product> GetProductByIdAync(int productId);
+
+    public Task<ICollection<ProductCardViewModel>> GetAllProductsAsync();
 }

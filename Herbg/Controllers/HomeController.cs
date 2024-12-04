@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Herbg.Data;
 using Herbg.Models;
+using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Category;
 using Herbg.ViewModels.Home;
 using Herbg.ViewModels.Product;
@@ -9,40 +10,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class HomeController : Controller
+public class HomeController(ICategoryService category, IProductService product) : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-    private readonly ApplicationDbContext _dbContext;
-
-    public HomeController(ILogger<HomeController> logger,ApplicationDbContext dbContext)
-    {
-        _logger = logger;
-        _dbContext = dbContext;
-    }
+    private readonly ICategoryService _category = category;
+    private readonly IProductService _product = product;
 
     public async Task<IActionResult> Index()
     {
-        var categoreis = await _dbContext.Categories
-            .Select(c => new CategoryCardViewModel 
-            {
-                Id = c.Id,
-                Name = c.Name,
-                Description = c.Description,
-                ImagePath = c.ImagePath
-            })
-            .ToArrayAsync();
-
-        var products = await _dbContext.Products
-            .Select(p => new ProductCardViewModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                ImagePath = p.ImagePath,
-                Price = p.Price
-            })
-            .ToArrayAsync();
-
+        var categoreis = await _category.GetAllCategoriesAsync();
+        var products = await _product.GetAllProductsAsync();
         var viewModel = new CategoryProductHomeViewModel
         {
             Categories = categoreis,
