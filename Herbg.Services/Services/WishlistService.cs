@@ -11,9 +11,11 @@ using System.Threading.Tasks;
 
 namespace Herbg.Services.Services;
 
-public class WishlistService(IRepositroy<Wishlist>wishlist) : IWishlistService
+public class WishlistService(IRepositroy<Wishlist>wishlist,IRepositroy<Product>products,IRepositroy<Cart>carts) : IWishlistService
 {
     private readonly IRepositroy<Wishlist> _wishlist = wishlist;
+    private readonly IRepositroy<Product> _products = products;
+    private readonly IRepositroy<Cart> _carts = carts;
 
     public async Task<bool> AddToWishlistAsync(string clientId, int productId)
     {
@@ -51,7 +53,52 @@ public class WishlistService(IRepositroy<Wishlist>wishlist) : IWishlistService
         return clientWishlists;
     }
 
-    public async Task<bool> RemoveFromWishlist(string clientId, int productId)
+    //Make that method return enum
+    public async Task<bool> MoveToCartAsync(string clientId, int productId)
+    {
+        // Check if the product exists
+        var productToAdd = await _products.FindByIdAsync(productId);
+            
+        if (productToAdd == null)
+        {
+            return false; // no product with that id
+        }
+
+        // Check if client has a cart
+        var clientCart = await _carts
+            .GetAllAttachedAsync()
+            .Include(c => c.CartItems).ThenInclude(ci => ci.Product)
+            .FirstOrDefaultAsync(c => c.ClientId == clientId);
+
+        if (clientCart == null)
+        {
+            clientCart = new Cart { ClientId = clientId, CartItems = new List<CartItem>() };
+            await _carts.AddAsync(clientCart); //Creates car for the client
+        }
+
+        // Check if the product is already in the cart
+        var existingCartItem = clientCart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+        if (existingCartItem == null)
+        {
+            // Add product to cart
+            var cartItem = new CartItem
+            {
+                ProductId = productId,
+                CartId = clientCart.Id,
+                Price = productToAdd.Price,
+                Quantity = 1
+            };
+            clientCart.CartItems.Add(cartItem);
+            await _carts.UpdateAsync(clientCart);
+        }
+
+        // Remove product from wishlist
+        var removeProductFromWishlist = await RemoveFromWishlistAsync(clientId, productId);
+
+        return true;
+    }
+
+    public async Task<bool> RemoveFromWishlistAsync(string clientId, int productId)
     {
         //Check if wishlist item exist
         var wishlistItem = await _wishlist

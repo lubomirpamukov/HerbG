@@ -13,5 +13,7 @@ public interface IWishlistService
 
     public Task<bool> AddToWishlistAsync(string clientId, int productId);
 
-    public Task<bool> RemoveFromWishlist(string clientId, int productId);
+    public Task<bool> RemoveFromWishlistAsync(string clientId, int productId);
+
+    public Task<bool> MoveToCartAsync(string clientId, int productId);
 }
