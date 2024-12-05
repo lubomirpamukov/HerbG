@@ -57,7 +57,7 @@ public class WishlistController(ApplicationDbContext context, UserManager<Applic
             return NotFound();
         }
 
-        var isItemRemoved = await _wishlistService.RemoveFromWishlist(clientId, productId);
+        var isItemRemoved = await _wishlistService.RemoveFromWishlistAsync(clientId, productId);
 
         if (!isItemRemoved)
         {
@@ -76,49 +76,12 @@ public class WishlistController(ApplicationDbContext context, UserManager<Applic
             return NotFound("Client not found.");
         }
 
-        // Check if the product exists
-        var productToAdd = await _context.Products.FindAsync(productId);
-        if (productToAdd == null)
-        {
-            return NotFound("Product not found.");
-        }
+       var isProductMoved = await _wishlistService.MoveToCartAsync(clientId, productId);
 
-        // Check if client has a cart
-        var clientCart = await _context.Carts.Include(c => c.CartItems).ThenInclude(ci => ci.Product)
-                                             .FirstOrDefaultAsync(c => c.ClientId == clientId);
-        if (clientCart == null)
+        if (!isProductMoved)
         {
-            clientCart = new Cart { ClientId = clientId, CartItems = new List<CartItem>() };
-            _context.Carts.Add(clientCart);
-            await _context.SaveChangesAsync();
+            return NotFound();
         }
-
-        // Check if the product is already in the cart
-        var existingCartItem = clientCart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
-        if (existingCartItem == null)
-        {
-            // Add product to cart
-            var cartItem = new CartItem 
-            { 
-                ProductId = productId,
-                CartId = clientCart.Id,
-                Price = productToAdd.Price,
-                Quantity = 1
-            };
-            _context.CartItems.Add(cartItem);
-        }
-
-        // Remove product from wishlist
-        var productWishlist = await _context.Wishlists
-            .FirstOrDefaultAsync(w => w.ClientId == clientId && w.ProductId == productId);
-        if (productWishlist == null)
-        {
-            return NotFound("Product not found in wishlist.");
-        }
-        _context.Wishlists.Remove(productWishlist);
-
-        // Save changes
-        await _context.SaveChangesAsync();
 
         return RedirectToAction("Index", "Wishlist");
     }
