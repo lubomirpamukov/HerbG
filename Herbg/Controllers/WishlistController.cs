@@ -38,14 +38,11 @@ public class WishlistController(ApplicationDbContext context, UserManager<Applic
             return NotFound();
         }
 
-        //Check if wishlist item exist
-        var wishlistItem = await _context.Wishlists
-            .FirstOrDefaultAsync(c => c.ClientId == clientId && c.ProductId == productId);
-        if (wishlistItem == null)
+        var isItemAddedToWishlist = await _wishlistService.AddToWishlistAsync(clientId, productId);
+
+        if (!isItemAddedToWishlist)
         {
-            var newWishlistItem = new Wishlist { ClientId = clientId, ProductId = productId };
-            _context.Wishlists.Add(newWishlistItem);
-            await _context.SaveChangesAsync();
+            return NotFound();
         }
 
         return RedirectToAction("Index","Product");
