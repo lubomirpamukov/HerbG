@@ -57,13 +57,11 @@ public class WishlistController(ApplicationDbContext context, UserManager<Applic
             return NotFound();
         }
 
-        //Check if wishlist item exist
-        var wishlistItem = await _context.Wishlists
-            .FirstOrDefaultAsync(c => c.ClientId == clientId && c.ProductId == productId);
-        if (wishlistItem != null)
+        var isItemRemoved = await _wishlistService.RemoveFromWishlist(clientId, productId);
+
+        if (!isItemRemoved)
         {
-            _context.Wishlists.Remove(wishlistItem);
-            await _context.SaveChangesAsync();
+            return NotFound();
         }
 
         return RedirectToAction("Index", "Wishlist");
