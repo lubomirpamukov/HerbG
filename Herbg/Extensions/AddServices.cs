@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IReviewService,ReviewService>();
+        services.AddScoped<IWishlistService, WishlistService>();
 
         return services;
     }
