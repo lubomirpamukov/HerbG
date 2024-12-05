@@ -8,9 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class WishlistController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IWishlistService wishlistService) : Controller
+public class WishlistController(UserManager<ApplicationUser> userManager, IWishlistService wishlistService) : Controller
 {
-    private readonly ApplicationDbContext _context = context;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly IWishlistService _wishlistService = wishlistService;
 
@@ -89,11 +88,13 @@ public class WishlistController(ApplicationDbContext context, UserManager<Applic
     public async Task<IActionResult> GetWishlistItemCount()
     {
         var clientId = _userManager.GetUserId(User);
-        var wishlist = await _context.Wishlists
-            .Where(w => w.ClientId == clientId)
-            .ToArrayAsync();
 
-        var wishlistCount = wishlist?.Count() ?? 0;
+        if (string.IsNullOrWhiteSpace(clientId))
+        {
+            return NotFound();
+        }
+
+        var wishlistCount = await _wishlistService.GetWishlistItemCountAsync(clientId);
         return Json(wishlistCount);  // Returns the count as JSON
     }
 }
