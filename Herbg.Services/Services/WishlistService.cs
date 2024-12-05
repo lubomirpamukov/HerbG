@@ -2,6 +2,7 @@
 using Herbg.Models;
 using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Wishlist;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -51,6 +52,18 @@ public class WishlistService(IRepositroy<Wishlist>wishlist,IRepositroy<Product>p
             .ToArrayAsync();
 
         return clientWishlists;
+    }
+
+    public async Task<int> GetWishlistItemCountAsync(string clientId)
+    {
+        var wishlist = await _wishlist
+            .GetAllAttachedAsync()
+            .Where(w => w.ClientId == clientId)
+            .ToArrayAsync();
+
+        var wishlistCount = wishlist?.Count() ?? 0;
+
+        return wishlistCount;
     }
 
     //Make that method return enum
