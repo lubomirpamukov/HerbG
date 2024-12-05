@@ -50,4 +50,19 @@ public class WishlistService(IRepositroy<Wishlist>wishlist) : IWishlistService
 
         return clientWishlists;
     }
+
+    public async Task<bool> RemoveFromWishlist(string clientId, int productId)
+    {
+        //Check if wishlist item exist
+        var wishlistItem = await _wishlist
+            .GetAllAttachedAsync()
+            .FirstOrDefaultAsync(c => c.ClientId == clientId && c.ProductId == productId);
+
+        if (wishlistItem != null)
+        {
+            await _wishlist.DeleteAsync(wishlistItem);
+        }
+
+        return true;
+    }
 }

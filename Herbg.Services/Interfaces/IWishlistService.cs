@@ -12,4 +12,6 @@ public interface IWishlistService
     public Task<IEnumerable<WishlistItemViewModel>> GetClientWishlistAsync(string clientId);
 
     public Task<bool> AddToWishlistAsync(string clientId, int productId);
+
+    public Task<bool> RemoveFromWishlist(string clientId, int productId);
 }
