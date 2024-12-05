@@ -1,5 +1,6 @@
 ﻿using Herbg.Data;
 using Herbg.Models;
+using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Wishlist;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,17 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class WishlistController : Controller
+public class WishlistController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IWishlistService wishlistService) : Controller
 {
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ApplicationDbContext _context = context;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly IWishlistService _wishlistService = wishlistService;
 
-    public WishlistController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
-    {
-        _context = context;
-        _userManager = userManager;
-    }
-
+    
     public async Task<IActionResult> Index()
     {
         //Check if client exist
@@ -27,21 +24,7 @@ public class WishlistController : Controller
             return NotFound();
         }
 
-        //Check client wishlist
-        var clientWishlists = await _context.Wishlists
-            .Where(w => w.ClientId == clientId)
-            .Include(w => w.Product)
-            .Select(c => new WishlistItemViewModel 
-            {
-                Id = c.ProductId,
-                Description = c.Product.Description,
-                ImagePath = c.Product.ImagePath,
-                Name = c.Product.Name,
-                Price = c.Product.Price
-            })
-            .ToArrayAsync();
-
-
+        var clientWishlists = await _wishlistService.GetClientWishlistAsync(clientId);
 
         return View(clientWishlists);
     }
