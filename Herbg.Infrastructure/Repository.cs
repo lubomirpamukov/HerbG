@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Herbg.Infrastructure;
 
-public class Repository<T> : IRepositroy<T> where T : class
+public class Repository<T> : IRepository<T> where T : class
 {
     private readonly ApplicationDbContext _context;
     private readonly DbSet<T> _dbSet;
@@ -100,7 +100,7 @@ public class Repository<T> : IRepositroy<T> where T : class
         return await _dbSet.ToListAsync();
     }
 
-    public IQueryable<T> GetAllAttachedAsync()
+    public IQueryable<T> GetAllAttached()
     {
         return  _dbSet.AsQueryable();
     }

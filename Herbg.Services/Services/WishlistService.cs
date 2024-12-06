@@ -12,17 +12,17 @@ using System.Threading.Tasks;
 
 namespace Herbg.Services.Services;
 
-public class WishlistService(IRepositroy<Wishlist>wishlist,IRepositroy<Product>products,IRepositroy<Cart>carts) : IWishlistService
+public class WishlistService(IRepository<Wishlist>wishlist,IRepository<Product>products,IRepository<Cart>carts) : IWishlistService
 {
-    private readonly IRepositroy<Wishlist> _wishlist = wishlist;
-    private readonly IRepositroy<Product> _products = products;
-    private readonly IRepositroy<Cart> _carts = carts;
+    private readonly IRepository<Wishlist> _wishlist = wishlist;
+    private readonly IRepository<Product> _products = products;
+    private readonly IRepository<Cart> _carts = carts;
 
     public async Task<bool> AddToWishlistAsync(string clientId, int productId)
     {
         //Check if wishlist item exist
         var wishlistItem = await _wishlist
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .FirstOrDefaultAsync(c => c.ClientId == clientId && c.ProductId == productId);
 
         if (wishlistItem == null)
@@ -38,7 +38,7 @@ public class WishlistService(IRepositroy<Wishlist>wishlist,IRepositroy<Product>p
     {
         //Check client wishlist
         var clientWishlists = await _wishlist
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .Where(w => w.ClientId == clientId)
             .Include(w => w.Product)
             .Select(c => new WishlistItemViewModel
@@ -57,7 +57,7 @@ public class WishlistService(IRepositroy<Wishlist>wishlist,IRepositroy<Product>p
     public async Task<int> GetWishlistItemCountAsync(string clientId)
     {
         var wishlist = await _wishlist
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .Where(w => w.ClientId == clientId)
             .ToArrayAsync();
 
@@ -79,7 +79,7 @@ public class WishlistService(IRepositroy<Wishlist>wishlist,IRepositroy<Product>p
 
         // Check if client has a cart
         var clientCart = await _carts
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .Include(c => c.CartItems).ThenInclude(ci => ci.Product)
             .FirstOrDefaultAsync(c => c.ClientId == clientId);
 
@@ -115,7 +115,7 @@ public class WishlistService(IRepositroy<Wishlist>wishlist,IRepositroy<Product>p
     {
         //Check if wishlist item exist
         var wishlistItem = await _wishlist
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .FirstOrDefaultAsync(c => c.ClientId == clientId && c.ProductId == productId);
 
         if (wishlistItem != null)

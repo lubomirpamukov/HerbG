@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 
 namespace Herbg.Services.Services;
 
-public class ReviewService(IRepositroy<ApplicationUser>client,IRepositroy<Review>review) : IReviewService
+public class ReviewService(IRepository<ApplicationUser>client,IRepository<Review>review) : IReviewService
 {
-    private readonly IRepositroy<ApplicationUser> _client = client;
-    private readonly IRepositroy<Review> _review = review;
+    private readonly IRepository<ApplicationUser> _client = client;
+    private readonly IRepository<Review> _review = review;
     public async Task<ReviewViewModel> GetReviewFormAsync(string clientId, int productId)
     {
         var client = await _client.FindByIdAsync(clientId);
@@ -30,7 +30,7 @@ public class ReviewService(IRepositroy<ApplicationUser>client,IRepositroy<Review
 
         //Check if customer wrote a review for this product
         var customerReview = await _review
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .FirstOrDefaultAsync(review => review.ProductId == model.Id && review.ClientId == clientId);
         if (customerReview != null)
         {

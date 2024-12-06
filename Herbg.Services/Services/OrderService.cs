@@ -12,16 +12,16 @@ using Herbg.ViewModels.Order;
 
 namespace Herbg.Services.Services;
 
-public class OrderService(IRepositroy<Cart> cart, IRepositroy<Order>order) : IOrderService
+public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOrderService
 {
-    private readonly IRepositroy<Order> _order = order;
-    private readonly IRepositroy<Cart> _cart = cart;
+    private readonly IRepository<Order> _order = order;
+    private readonly IRepository<Cart> _cart = cart;
 
     public async Task<ICollection<OrderSummaryViewModel>> GetAllOrdersAsync(string clientId)
     {
         //Get user orders 
         var orders = await _order
-            .GetAllAttachedAsync()
+            .GetAllAttached()
         .Where(o => o.ClientId == clientId)
         .Include(o => o.ProductOrders)
         .ToListAsync();
@@ -48,7 +48,7 @@ public class OrderService(IRepositroy<Cart> cart, IRepositroy<Order>order) : IOr
     public async Task<CheckoutViewModel> GetCheckout(string clientId,string cartId)
     {
         var clientCart = await _cart
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .Where(c => c.Id == cartId)
             .Include(c => c.Client)
             .Include(c => c.CartItems)
@@ -85,7 +85,7 @@ public class OrderService(IRepositroy<Cart> cart, IRepositroy<Order>order) : IOr
     {
         // Fetch the cart and associated items
         var cartToRemove = await _cart
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .Include(c => c.CartItems)
             .ThenInclude(ci => ci.Product) // Ensure Product details are included if needed for validation
             .FirstOrDefaultAsync(c => c.ClientId == clientId);
@@ -131,7 +131,7 @@ public class OrderService(IRepositroy<Cart> cart, IRepositroy<Order>order) : IOr
     {
         //Finds order and includes all needed tables
         var order = await _order
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .Where(o => o.Id == orderId)
             .Include(op => op.ProductOrders)
             .ThenInclude(po => po.Product)

@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace Herbg.Services.Services;
 
-public class ProductService(IRepositroy<Product> product) : IProductService
+public class ProductService(IRepository<Product> product) : IProductService
 {
-    private readonly IRepositroy<Product> _product = product;
+    private readonly IRepository<Product> _product = product;
 
     public async Task<ICollection<ProductCardViewModel>> GetAllProductsAsync()
     {
         var products = await _product
-             .GetAllAttachedAsync()
+             .GetAllAttached()
              .Where(p => p.IsDeleted == false)
              .Select(p => new ProductCardViewModel
              {
@@ -43,7 +43,7 @@ public class ProductService(IRepositroy<Product> product) : IProductService
     public async Task<ProductDetailsViewModel> GetProductDetailsAsync(int productId)
     {
         var product = await _product
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .Where(p => p.Id == productId)
             .Include(p => p.Category)
             .Include(p => p.Manufactorer)
@@ -75,7 +75,7 @@ public class ProductService(IRepositroy<Product> product) : IProductService
     public async Task<ICollection<ProductCardViewModel>> GetProductsByCategoryAsync(int categoryId)
     {
         var productsByCategory = await _product
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .Where(p => p.CategoryId == categoryId && p.IsDeleted == false)
             .ToArrayAsync();
 

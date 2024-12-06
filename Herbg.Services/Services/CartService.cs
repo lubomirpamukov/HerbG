@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Services.Services;
 
-public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product, IRepositroy<Wishlist>wishlist) : ICartService
+public class CartService(IRepository<Cart> cart, IRepository<Product> product, IRepository<Wishlist>wishlist) : ICartService
 {
-    private readonly IRepositroy<Cart> _cart = cart;
-    private readonly IRepositroy<Product> _product = product;
-    private readonly IRepositroy<Wishlist> _wishlist = wishlist;
+    private readonly IRepository<Cart> _cart = cart;
+    private readonly IRepository<Product> _product = product;
+    private readonly IRepository<Wishlist> _wishlist = wishlist;
 
     public async Task<bool> AddItemToCartAsync(string clientId, int productId, int quantity)
     {
@@ -27,7 +27,7 @@ public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product, I
         }
 
         var clientCart = await _cart
-               .GetAllAttachedAsync()
+               .GetAllAttached()
                .Include(c => c.CartItems)
                .FirstOrDefaultAsync(c => c.ClientId == clientId);
 
@@ -71,7 +71,7 @@ public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product, I
 
     public async Task<int> GetCartItemsCountAsync(string clientId)
     {
-        var cart = await _cart.GetAllAttachedAsync()
+        var cart = await _cart.GetAllAttached()
                 .Include(c => c.CartItems)
                 .FirstOrDefaultAsync(c => c.ClientId == clientId);
 
@@ -92,7 +92,7 @@ public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product, I
 
     public async Task<CartViewModel> GetUserCartAsync(string clientId)
     {
-        var clientCart = await _cart.GetAllAttachedAsync()
+        var clientCart = await _cart.GetAllAttached()
               .Where(c => c.ClientId == clientId)
               .Select(c => new CartViewModel
               {
@@ -123,7 +123,7 @@ public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product, I
 
     public async Task<bool> MoveCartItemToWishListAsync(string clinetId, int productId)
     {
-        var clientCart = await _cart.GetAllAttachedAsync()
+        var clientCart = await _cart.GetAllAttached()
                 .Where(c => c.ClientId == clinetId)
                 .Include(c => c.CartItems)
                 .FirstOrDefaultAsync();
@@ -153,7 +153,7 @@ public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product, I
     public async Task<bool> RemoveCartItemAsync(string clientId, int productId)
     {
         // Load the cart with its items in a single query
-        var clientCart = await _cart.GetAllAttachedAsync()
+        var clientCart = await _cart.GetAllAttached()
             .Include(c => c.CartItems)
             .FirstOrDefaultAsync(c => c.ClientId == clientId);
 
@@ -177,7 +177,7 @@ public class CartService(IRepositroy<Cart> cart, IRepositroy<Product> product, I
     public async Task<bool> UpdateCartItemQuantityAsync(string clientId, int productId, int quantity)
     {
         var clientCart = await _cart
-            .GetAllAttachedAsync()
+            .GetAllAttached()
             .Include(c => c.CartItems)
             .FirstOrDefaultAsync(ci => ci.ClientId == clientId && ci.CartItems.Any(p => p.ProductId == productId));
 

@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Herbg.Infrastructure.Interfaces;
 
-public interface IRepositroy<T> where T : class
+public interface IRepository<T> where T : class
 {
     public Task<IEnumerable<T>> GetAllAsync();
 
-    public IQueryable<T> GetAllAttachedAsync();
+    public IQueryable<T> GetAllAttached();
 
     public Task<T?> FindByIdAsync(object id);
 

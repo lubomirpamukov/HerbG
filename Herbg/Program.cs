@@ -34,7 +34,7 @@ namespace Herbg
             builder.Services.AddControllersWithViews();
 
             //Add generic repository
-            builder.Services.AddScoped(typeof(IRepositroy<>), typeof(Repository<>));
+            builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
            
             //Adding services extension method
             builder.Services.AddApplicationServices();
