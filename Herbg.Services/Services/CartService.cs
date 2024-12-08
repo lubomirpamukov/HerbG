@@ -1,12 +1,6 @@
 ﻿using Herbg.Models;
 using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Cart;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Herbg.Infrastructure;
 using Herbg.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -116,6 +110,7 @@ public class CartService(IRepository<Cart> cart, IRepository<Product> product, I
             };
 
             await _cart.AddAsync(newCart);
+            clientCart = new CartViewModel { Id = newCart.Id , CartItems = new List<CartItemViewModel>()};
         }
 
         return clientCart!;
