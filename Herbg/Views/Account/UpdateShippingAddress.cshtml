@@ -1,0 +1,57 @@
+﻿@model Herbg.ViewModels.Account.ShippingAddressViewModel
+
+@{
+    ViewData["Title"] = "Shipping Address";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="UpdateShippingAddress" asp-controller="Account" method="post" class="bg-light p-4 rounded shadow-sm">
+    <h3 class="mb-4">Enter Your Shipping Address</h3>
+
+    <!-- Shipping Address -->
+    <div class="mb-3">
+        <label asp-for="ShippingInformationAddress" class="form-label">Shipping Address</label>
+        <input asp-for="ShippingInformationAddress" class="form-control" placeholder="Street address, P.O. box, company name, etc." />
+        <span asp-validation-for="ShippingInformationAddress" class="text-danger"></span>
+    </div>
+
+    <!-- Full Name -->
+    <div class="mb-3">
+        <label asp-for="ShippingInformationFullName" class="form-label">Full Name</label>
+        <input asp-for="ShippingInformationFullName" class="form-control" placeholder="Your full name" />
+        <span asp-validation-for="ShippingInformationFullName" class="text-danger"></span>
+    </div>
+
+    <!-- City -->
+    <div class="mb-3">
+        <label asp-for="ShippingInformationCity" class="form-label">City</label>
+        <input asp-for="ShippingInformationCity" class="form-control" placeholder="Your city" />
+        <span asp-validation-for="ShippingInformationCity" class="text-danger"></span>
+    </div>
+
+    <!-- Zip Code -->
+    <div class="mb-3">
+        <label asp-for="ShippingInformationZip" class="form-label">Zip Code</label>
+        <input asp-for="ShippingInformationZip" class="form-control" placeholder="Enter your zip code" />
+        <span asp-validation-for="ShippingInformationZip" class="text-danger"></span>
+    </div>
+
+    <!-- Country -->
+    <div class="mb-3">
+        <label asp-for="ShippingInformationCountry" class="form-label">Country</label>
+        <input asp-for="ShippingInformationCountry" class="form-control" placeholder="Enter your country" />
+        <span asp-validation-for="ShippingInformationCountry" class="text-danger"></span>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary btn-lg w-100">Save Shipping Address</button>
+
+    <!-- Cancel Button -->
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary btn-lg w-100 mt-3">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
