@@ -79,13 +79,7 @@ public class ProductService(IRepository<Product> product) : IProductService
             .Where(p => p.CategoryId == categoryId && p.IsDeleted == false)
             .ToArrayAsync();
 
-        if (productsByCategory == null)
-        {
-            throw new ArgumentNullException("Category can't be null");
-        }
-
         var viewModelCollection = new List<ProductCardViewModel>();
-
         foreach (var product in productsByCategory)
         {
             var newProduct = new ProductCardViewModel

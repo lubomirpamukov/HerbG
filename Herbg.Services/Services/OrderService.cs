@@ -20,7 +20,6 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
         .Where(o => o.ClientId == clientId)
         .Include(o => o.ProductOrders)
         .ToListAsync();
-
         //Create view model
         List<OrderSummaryViewModel> viewModel = new List<OrderSummaryViewModel>();
 
@@ -36,7 +35,6 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
             };
             viewModel.Add(newOrder);
         }
-
         return viewModel;
     }
 
@@ -56,7 +54,6 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
         }
 
         var totalProductPrice = clientCart.CartItems.Sum(c => c.Price * c.Quantity);
-
         var checkoutView = new ViewModels.Order.CheckoutViewModel
         {
             Address = clientCart.Client.Address!,
@@ -72,7 +69,6 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
             ShippingCost = 10,
             Total = totalProductPrice + 10
         };
-
         return checkoutView;
     }
 
@@ -102,7 +98,6 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
             TotalAmount = calculatedTotal,
             ProductOrders = new List<ProductOrder>()
         };
-
         // Convert cart items to ProductOrder entries
         foreach (var item in cartToRemove.CartItems)
         {
@@ -115,7 +110,6 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
 
             newOrder.ProductOrders.Add(newItem);
         }
-
         // Save the new order and remove the cart
         await _order.AddAsync(newOrder);
         await _cart.DeleteAsync(cartToRemove);
@@ -133,14 +127,11 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
 	        .Include(o => o.Client)
 	        .FirstOrDefaultAsync();
 
-
-
 		//Check if order exist
 		if (order == null)
         {
             return null;
         }
-
 
 		//Crate order view model
 		var orderDetailsViewModel = new OrderDetailsViewModel
@@ -160,7 +151,6 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
 
             }).ToList(),
         };
-
         return orderDetailsViewModel;
     }
 }

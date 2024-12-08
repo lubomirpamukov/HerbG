@@ -280,6 +280,73 @@ namespace Herbg.Tests
 			Assert.That(result.Reviews.Count, Is.EqualTo(0), "The product should have no reviews.");
 		}
 
+		//GetProductByCategory
+
+		[Test]
+		public async Task GetProductsByCategoryAsync_ShouldReturnProducts_WhenProductsExistInCategory()
+		{
+			// Arrange: Add a category and related products
+			var category = new Category { Id = 1, Name = "Herbs" , ImagePath="images/test/category.jpg", Description ="Test description for category"};
+			_dbContext.Categories.Add(category);
+
+			var products = new List<Product>
+		{
+			new Product { Id = 1, Name = "Mint", Description = "Fresh mint leaves", ImagePath = "images/mint.jpg", Price = 2.99m, CategoryId = 1, IsDeleted = false },
+			new Product { Id = 2, Name = "Basil", Description = "Fresh basil leaves", ImagePath = "images/basil.jpg", Price = 3.99m, CategoryId = 1, IsDeleted = false }
+		};
+			_dbContext.Products.AddRange(products);
+			await _dbContext.SaveChangesAsync();
+
+			// Act
+			var result = await _productService.GetProductsByCategoryAsync(1);
+
+			// Assert
+			Assert.That(result, Is.Not.Null);
+			Assert.That(result.Count, Is.EqualTo(2));
+			Assert.That(result.Any(p => p.Name == "Mint"), Is.True);
+			Assert.That(result.Any(p => p.Name == "Basil"), Is.True);
+		}
+
+		[Test]
+		public async Task GetProductsByCategoryAsync_ShouldReturnEmptyCollection_WhenNoProductsExistInCategory()
+		{
+			// Arrange: Add a category without products
+			var category = new Category { Id = 2, Name = "Empty Category" , ImagePath="images/category/her.jpg", Description="Test description for category"};
+			_dbContext.Categories.Add(category);
+			await _dbContext.SaveChangesAsync();
+
+			// Act
+			var result = await _productService.GetProductsByCategoryAsync(2);
+
+			// Assert
+			Assert.That(result, Is.Not.Null);
+			Assert.That(result.Count, Is.EqualTo(0));
+		}
+
+		[Test]
+		public async Task GetProductsByCategoryAsync_ShouldExcludeDeletedProducts()
+		{
+			// Arrange: Add a category with some deleted products
+			var category = new Category { Id = 3, Name = "Herbs", ImagePath = "images/category/her.jpg", Description = "Test description for category" };
+			_dbContext.Categories.Add(category);
+
+			var products = new List<Product>
+		{
+			new Product { Id = 3, Name = "Cilantro", Description = "Fresh cilantro", ImagePath = "images/cilantro.jpg", Price = 1.99m, CategoryId = 3, IsDeleted = false },
+			new Product { Id = 4, Name = "Parsley", Description = "Fresh parsley", ImagePath = "images/parsley.jpg", Price = 2.49m, CategoryId = 3, IsDeleted = true }
+		};
+			_dbContext.Products.AddRange(products);
+			await _dbContext.SaveChangesAsync();
+
+			// Act
+			var result = await _productService.GetProductsByCategoryAsync(3);
+
+			// Assert
+			Assert.That(result, Is.Not.Null);
+			Assert.That(result.Count, Is.EqualTo(1));
+			Assert.That(result.Any(p => p.Name == "Cilantro"), Is.True);
+			Assert.That(result.Any(p => p.Name == "Parsley"), Is.False);
+		}
 
 
 	}
