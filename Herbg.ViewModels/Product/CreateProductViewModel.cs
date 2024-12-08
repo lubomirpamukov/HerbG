@@ -20,8 +20,7 @@ namespace Herbg.ViewModels.Product
         [Range(ProductPriceMinvalue, ProductPriceMaxValue, ErrorMessage = ProductPriceErrorMessage)]
         public decimal Price { get; set; }
 
-        [Required]
-        public string ImagePath { get; set; } = null!;
+        public string? ImagePath { get; set; } = null!;
 
         [Required]
         [MaxLength(ProductDescriptionMaxLength)]
