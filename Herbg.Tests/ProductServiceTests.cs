@@ -184,7 +184,7 @@ namespace Herbg.Tests
 			// Arrange: Add related entities first
 			var category = new Category { Id = 10, Name = "Herbs", ImagePath = "images/category/test.jpg", Description = "Test description for the category" };
 			var manufacturer = new Manufactorer { Id = 1, Name = "Green Growers", Address = "test street 1938743" };
-			var client = new ApplicationUser { Id = "1", UserName = "JohnDoe", Address = "Test address" };
+			var client = new ApplicationUser { Id = "1", UserName = "JohnDoe", ShippingInformationAddress = "Test address" };
 			_dbContext.Categories.Add(category);
 			_dbContext.Manufactorers.Add(manufacturer);
 			_dbContext.Users.Add(client);

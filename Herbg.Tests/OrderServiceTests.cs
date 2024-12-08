@@ -151,7 +151,7 @@ public class OrderServiceTests
 		var client = new ApplicationUser
 		{
 			Id = clientId,
-			Address = "123 Test Street"
+			ShippingInformationAddress = "123 Test Street"
 		};
 
 		var product1 = new Product { Id = 1, Name = "Product1", ImagePath = "path1.jpg", Price = 10, Description = "Test description" };
@@ -179,7 +179,7 @@ public class OrderServiceTests
 
 		// Assert
 		Assert.That(result, Is.Not.Null, "Result should not be null when the cart exists.");
-		Assert.That(result.Address, Is.EqualTo(client.Address), "The address should match the client's address.");
+		Assert.That(result.Address, Is.EqualTo(client.ShippingInformationAddress), "The address should match the client's address.");
 		Assert.That(result.CartItems.Count, Is.EqualTo(2), "The cart should have 2 items.");
 		Assert.That(result.Subtotal, Is.EqualTo(40), "Subtotal should match the sum of item prices (10*2 + 20).");
 		Assert.That(result.Total, Is.EqualTo(50), "Total should include shipping cost (40 + 10).");
@@ -195,7 +195,7 @@ public class OrderServiceTests
 		var client = new ApplicationUser
 		{
 			Id = clientId,
-			Address = "456 Example Lane"
+			ShippingInformationAddress = "456 Example Lane"
 		};
 
 		var product = new Product { Id = 1, Name = "SingleProduct", ImagePath = "product.jpg", Price = 15 , Description = "Test description"};
@@ -278,7 +278,7 @@ public class OrderServiceTests
 		var createdOrder = await _dbContext.Orders.Include(o => o.ProductOrders).FirstOrDefaultAsync(o => o.Id == result);
 
 		Assert.That(createdOrder, Is.Not.Null, "The order should be saved in the database.");
-		Assert.That(createdOrder.ClientId, Is.EqualTo(clientId), "Order should have the correct client ID.");
+		Assert.That(createdOrder!.ClientId, Is.EqualTo(clientId), "Order should have the correct client ID.");
 		Assert.That(createdOrder.Address, Is.EqualTo(model.Address), "Order should have the correct address.");
 		Assert.That(createdOrder.TotalAmount, Is.EqualTo(40), "Order total amount should match the cart items' calculated total.");
 		Assert.That(createdOrder.ProductOrders.Count, Is.EqualTo(1), "Order should have 1 product order.");
@@ -323,7 +323,7 @@ public class OrderServiceTests
 		var createdOrder = await _dbContext.Orders.Include(o => o.ProductOrders).FirstOrDefaultAsync(o => o.Id == result);
 
 		Assert.That(createdOrder, Is.Not.Null, "The order should be saved in the database.");
-		Assert.That(createdOrder.TotalAmount, Is.EqualTo(60), "Order total amount should match the cart items' calculated total (10*3 + 15*2).");
+		Assert.That(createdOrder!.TotalAmount, Is.EqualTo(60), "Order total amount should match the cart items' calculated total (10*3 + 15*2).");
 		Assert.That(createdOrder.ProductOrders.Count, Is.EqualTo(2), "Order should have 2 product orders.");
 	}
 
