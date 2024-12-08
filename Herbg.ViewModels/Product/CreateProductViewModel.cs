@@ -33,8 +33,6 @@ namespace Herbg.ViewModels.Product
         [Required]
         public int CategoryId { get; set; }
 
-        public IFormFile? ImageFile { get; set; }
-
         // Optional: To allow users to assign sizes to do if time is left
         public List<int> ProductSizeIds { get; set; } = new List<int>();
     }

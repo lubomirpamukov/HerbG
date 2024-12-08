@@ -23,6 +23,6 @@ public class Category
     public string Description { get; set; } = null!;
 
     [Required]
-    [MaxLength(CategoryImagePathMaxLength)]
-    public string ImagePath { get; set; } = null!;
+    [Url]
+    public string? ImagePath { get; set; } = null!;
 }
