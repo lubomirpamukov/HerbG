@@ -87,10 +87,6 @@ public class Repository<T> : IRepository<T> where T : class
     {
         var entity = await _dbSet.FindAsync(id);
 
-        if (entity == null)
-        {
-            throw new ArgumentNullException(nameof(entity), "can't be null");
-        };
 
         return  entity;
     }
