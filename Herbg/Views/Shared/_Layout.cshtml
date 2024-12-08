@@ -32,26 +32,29 @@
                             <li class="nav-item"><a asp-controller="Home" asp-action="About" class="nav-link">About</a></li>
                             <li class="nav-item"><a asp-controller="Home" asp-action="Contact" class="nav-link">Contact</a></li>
                         }
-                        
-                       
-                        <partial name="_LoginPartial.cshtml"></partial>
 
-                        @if (!User.IsInRole("Admin"))
+
+                            <partial name="_LoginPartial.cshtml"></partial>
+                        @if (User?.Identity?.IsAuthenticated ?? false)
                         {
-                            <li class="nav-item">
-                                <a asp-controller="Wishlist" asp-action="Index" class="nav-link">
-                                    <i class="fas fa-heart fs-4"></i>
-                                    <span class="position-absolute top-30 start-90 translate-middle badge rounded-pill bg-danger" id="wishListItemCount">0</span> <!-- This will be updated via AJAX -->
-                                </a>
-                            </li>
+                            @if (!User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="Wishlist" asp-action="Index" class="nav-link">
+                                        <i class="fas fa-heart fs-4"></i>
+                                        <span class="position-absolute top-30 start-90 translate-middle badge rounded-pill bg-danger" id="wishListItemCount">0</span> <!-- This will be updated via AJAX -->
+                                    </a>
+                                </li>
 
-                            <li class="nav-item">
-                                <a asp-controller="Cart" asp-action="Index" class="nav-link">
-                                    <i class="fas fa-shopping-cart fs-4"></i>
-                                    <span class="position-absolute top-30 start-90 translate-middle badge rounded-pill bg-danger" id="cartItemCount">0</span> <!-- This will be updated via AJAX -->
-                                </a>
-                            </li>
+                                <li class="nav-item">
+                                    <a asp-controller="Cart" asp-action="Index" class="nav-link">
+                                        <i class="fas fa-shopping-cart fs-4"></i>
+                                        <span class="position-absolute top-30 start-90 translate-middle badge rounded-pill bg-danger" id="cartItemCount">0</span> <!-- This will be updated via AJAX -->
+                                    </a>
+                                </li>
+                            }
                         }
+                       
                         
                     </ul>
                 </div>

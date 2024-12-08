@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -23,8 +24,8 @@ public class Product
     [Range(ProductPriceMinvalue, ProductPriceMaxValue, ErrorMessage = ProductPriceErrorMessage)]
     public decimal Price { get; set; }
 
-    [Required]
-    public string ImagePath { get; set; } = null!;
+    [Url]
+    public string? ImagePath { get; set; } = null!;
 
     [Required]
     [MaxLength(ProductDescriptionMaxLength)]

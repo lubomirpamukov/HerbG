@@ -56,7 +56,11 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
         var totalProductPrice = clientCart.CartItems.Sum(c => c.Price * c.Quantity);
         var checkoutView = new ViewModels.Order.CheckoutViewModel
         {
-            Address = clientCart.Client.Address!,
+            FullName = clientCart.Client.ShippingInformationFullName!,
+            Address = clientCart.Client.ShippingInformationAddress!,
+            City = clientCart.Client.ShippingInformationCity!,
+            ZipCode = clientCart.Client.ShippingInformationZip!,
+            Country = clientCart.Client.ShippingInformationCountry!,
             CartItems = clientCart.CartItems.Select(c => new ViewModels.Cart.CartItemViewModel
             {
                 ProductId = c.ProductId,
@@ -81,13 +85,10 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
             .ThenInclude(ci => ci.Product) // Ensure Product details are included if needed for validation
             .FirstOrDefaultAsync(c => c.ClientId == clientId);
 
-        if (cartToRemove == null)
-        {
-            return null;
-        }
+      
 
         // Calculate the total price dynamically from cart items
-        decimal calculatedTotal = cartToRemove.CartItems.Sum(item => item.Price * item.Quantity);
+        decimal calculatedTotal = cartToRemove!.CartItems.Sum(item => item.Price * item.Quantity);
 
         // Create the new order
         var newOrder = new Order

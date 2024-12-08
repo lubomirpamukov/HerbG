@@ -4,6 +4,7 @@ using Herbg.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Herbg.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241208194746_UpdateProductsAndCategories")]
+    partial class UpdateProductsAndCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +32,10 @@ namespace Herbg.Data.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -68,26 +75,6 @@ namespace Herbg.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ShippingInformationAddress")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("ShippingInformationCity")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ShippingInformationCountry")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ShippingInformationFullName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ShippingInformationZip")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
@@ -185,7 +172,7 @@ namespace Herbg.Data.Migrations
                         {
                             Id = 1,
                             Description = "Explore our range of medicinal herbs.",
-                            ImagePath = "https://media.istockphoto.com/id/598931180/photo/basil-sage-dill-and-thyme-herbs.jpg?s=1024x1024&w=is&k=20&c=QgnLxS6TDDPoh_bbVAVqaXTe5TbyjIFge9sxSGSA__s=",
+                            ImagePath = "https://www.istockphoto.com/photo/basil-sage-dill-and-thyme-herbs-gm598931180-102776863?searchscope=image%2Cfilm",
                             IsDeleted = false,
                             Name = "Medicinal Herbs"
                         },
@@ -193,7 +180,7 @@ namespace Herbg.Data.Migrations
                         {
                             Id = 2,
                             Description = "Discover fresh and aromatic herbs.",
-                            ImagePath = "https://media.istockphoto.com/id/504069254/photo/fresh-herbs-on-wooden-background.jpg?s=1024x1024&w=is&k=20&c=TdPOhT3xUMRt03AzvSfo8NKgzKusHbXMJv9Omw7zenw=",
+                            ImagePath = "https://www.istockphoto.com/photo/fresh-herbs-on-wooden-background-gm504069254-81682909?searchscope=image%2Cfilm",
                             IsDeleted = false,
                             Name = "Culinary Herbs"
                         },
@@ -201,7 +188,7 @@ namespace Herbg.Data.Migrations
                         {
                             Id = 3,
                             Description = "Savor the soothing flavors of our premium herbal teas. Perfect for relaxation and wellness.",
-                            ImagePath = "https://media.istockphoto.com/id/545799832/photo/two-cups-of-healthy-herbal-tea-with-mint-cinnamon-dried.jpg?s=1024x1024&w=is&k=20&c=kRpRimF1ufgUaXyl-wcFkQKvnU4YbMFwtpqKlFhG9oM=",
+                            ImagePath = "https://www.istockphoto.com/photo/two-cups-of-healthy-herbal-tea-with-mint-cinnamon-dried-gm545799832-98496663?searchscope=image%2Cfilm",
                             IsDeleted = false,
                             Name = "Herbal Teas"
                         },
@@ -209,7 +196,7 @@ namespace Herbg.Data.Migrations
                         {
                             Id = 4,
                             Description = "Discover our selection of herbs for aromatherapy. Perfect for relaxation, focus, and mood enhancement.",
-                            ImagePath = "https://media.istockphoto.com/id/546775666/photo/dried-herbs-and-essential-oils.jpg?s=1024x1024&w=is&k=20&c=4AK88NpTGMeqCViwoizSxc0B4Wr4nIsxia9hkboaA3M=",
+                            ImagePath = "https://www.istockphoto.com/photo/dried-herbs-and-essential-oils-gm546775666-98703909?searchscope=image%2Cfilm",
                             IsDeleted = false,
                             Name = "Aromatherapy Herbs"
                         });
@@ -378,7 +365,7 @@ namespace Herbg.Data.Migrations
                             Id = 1,
                             CategoryId = 3,
                             Description = "Herbal Tea Mix: A soothing blend of natural herbs crafted to promote relaxation, improve digestion, and boost overall wellness. Perfect for a calming break anytime.",
-                            ImagePath = "https://media.istockphoto.com/id/622039222/photo/assortment-of-dry-tea-in-glass-bowls-on-wooden-surface.jpg?s=1024x1024&w=is&k=20&c=4ggjpaDqyMDatq_O6q59BsCFs7VFmk9YDysYr7KDcRY=",
+                            ImagePath = "https://www.istockphoto.com/photo/assortment-of-dry-tea-in-glass-bowls-on-wooden-surface-gm622039222-108837373?searchscope=image%2Cfilm",
                             IsDeleted = false,
                             ManufactorerId = 1,
                             Name = "Herbal Tea Mix",
@@ -389,7 +376,7 @@ namespace Herbg.Data.Migrations
                             Id = 2,
                             CategoryId = 4,
                             Description = "Lavender Oil: A pure, aromatic essential oil known for its calming properties, skin nourishment, and stress relief. Ideal for relaxation and self-care rituals.",
-                            ImagePath = "https://media.istockphoto.com/id/585048326/photo/herbal-oil-and-lavender-flowers.jpg?s=1024x1024&w=is&k=20&c=jNZn3EevtNDr53UcPFilreSd1LOPyK0h5q784h9J8Ns=",
+                            ImagePath = "https://www.istockphoto.com/photo/herbal-oil-and-lavender-flowers-gm585048326-100237719?searchscope=image%2Cfilm",
                             IsDeleted = false,
                             ManufactorerId = 2,
                             Name = "Lavender Oil",
@@ -400,7 +387,7 @@ namespace Herbg.Data.Migrations
                             Id = 3,
                             CategoryId = 2,
                             Description = "Dried Rosemary: A fragrant herb with a robust flavor, perfect for enhancing your culinary dishes or brewing into a soothing herbal tea.",
-                            ImagePath = "https://media.istockphoto.com/id/1309541100/photo/fresh-rosemary-herb-on-a-wooden-background-top-view-rosemary-with-copy-space-cooking-concept.jpg?s=1024x1024&w=is&k=20&c=rw7K_nYTr-64KBmWlFZ6UrWuGrvV2-88kccf-SG8JwE=m",
+                            ImagePath = "https://www.istockphoto.com/photo/fresh-rosemary-herb-on-a-wooden-background-top-view-rosemary-with-copy-space-cooking-gm1309541100-399220748?searchscope=image%2Cfilm",
                             IsDeleted = false,
                             ManufactorerId = 3,
                             Name = "Rosemary Pack",
@@ -411,7 +398,7 @@ namespace Herbg.Data.Migrations
                             Id = 4,
                             CategoryId = 2,
                             Description = "Basil Plant: A fresh and aromatic herb, ideal for home gardens, cooking, and adding a touch of greenery to your space.",
-                            ImagePath = "https://media.istockphoto.com/id/535913985/photo/basil-in-a-clay-pot.jpg?s=1024x1024&w=is&k=20&c=GnxsfcEjKTGdOUEfHvq1E2Pr8ZBcYiu-n0GABgGSyNA=",
+                            ImagePath = "https://www.istockphoto.com/photo/basil-in-a-clay-pot-gm535913985-57380182?searchscope=image%2Cfilm",
                             IsDeleted = false,
                             ManufactorerId = 1,
                             Name = "Basil plant",

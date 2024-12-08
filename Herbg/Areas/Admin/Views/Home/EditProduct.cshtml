@@ -6,7 +6,7 @@
 
 <h2>@ViewData["Title"]</h2>
 
-<form asp-action="EditProduct" asp-controller="Home" asp-area="Admin" method="post" enctype="multipart/form-data">
+<form asp-action="EditProduct" asp-controller="Home" asp-area="Admin" method="post">
     <input type="hidden" asp-for="Id" />
 
     <!-- Product Name -->
@@ -45,10 +45,11 @@
         </div>
     </div>
 
-    <!-- Upload New Image -->
+    <!-- Image URL -->
     <div class="mb-3">
-        <label class="form-label mt-2">Upload New Image</label>
-        <input type="file" name="ImageFile" class="form-control" />
+        <label asp-for="ImagePath" class="form-label">Image URL</label>
+        <input asp-for="ImagePath" class="form-control" />
+        <span asp-validation-for="ImagePath" class="text-danger"></span>
     </div>
 
     <!-- Category Dropdown -->
@@ -77,4 +78,3 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-

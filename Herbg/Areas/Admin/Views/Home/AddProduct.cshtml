@@ -1,9 +1,8 @@
 ﻿@model Herbg.ViewModels.Product.CreateProductViewModel
 
-
 <h2>@ViewData["Title"]</h2>
 
-<form asp-action="EditProduct" asp-controller="Home" asp-area="Admin" method="post" enctype="multipart/form-data">
+<form asp-action="AddProduct" asp-controller="Home" asp-area="Admin" method="post">
     <input type="hidden" asp-for="Id" />
 
     <!-- Product Name -->
@@ -27,18 +26,18 @@
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
-
-    <!-- Upload New Image -->
+    <!-- Image URL -->
     <div class="mb-3">
-        <label class="form-label mt-2">Upload New Image</label>
-        <input type="file" name="ImageFile" asp-for="ImageFile" class="form-control" />
+        <label asp-for="ImagePath" class="form-label">Image URL</label>
+        <input asp-for="ImagePath" class="form-control" />
+        <span asp-validation-for="ImagePath" class="text-danger"></span>
     </div>
 
     <!-- Category Dropdown -->
     <div class="mb-3">
         <label asp-for="CategoryId" class="form-label">Category</label>
         <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.Categories">
-            <option value="">Select a Category</option> <!-- Default option -->
+            <option value="">Select a Category</option>
         </select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
@@ -47,7 +46,7 @@
     <div class="mb-3">
         <label asp-for="ManufactorerId" class="form-label">Manufacturer</label>
         <select asp-for="ManufactorerId" class="form-select" asp-items="ViewBag.Manufacturers">
-            <option value="">Select a Manufacturer</option> <!-- Default option -->
+            <option value="">Select a Manufacturer</option>
         </select>
         <span asp-validation-for="ManufactorerId" class="text-danger"></span>
     </div>
@@ -60,4 +59,3 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-

@@ -12,12 +12,12 @@ namespace Herbg.Services.Tests
 	[TestFixture]
 	public class CartServiceTests
 	{
-		private CartService _cartService;
-		private Mock<IRepository<Product>> _productRepoMock;
-		private Mock<IRepository<Wishlist>> _wishlistRepoMock;
-		private DbContextOptions<ApplicationDbContext> _dbContextOptions;
-		private ApplicationDbContext _dbContext;
-		private IRepository<Cart> _cartRepo;
+		private CartService _cartService = null!;
+		private Mock<IRepository<Product>> _productRepoMock = null!;
+		private Mock<IRepository<Wishlist>> _wishlistRepoMock = null!;
+		private DbContextOptions<ApplicationDbContext> _dbContextOptions = null!;
+		private ApplicationDbContext _dbContext = null!;
+		private IRepository<Cart> _cartRepo = null!;
 
 		[SetUp]
 		public void SetUp()

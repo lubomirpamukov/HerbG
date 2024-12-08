@@ -20,8 +20,7 @@ namespace Herbg.ViewModels.Product
         [Range(ProductPriceMinvalue, ProductPriceMaxValue, ErrorMessage = ProductPriceErrorMessage)]
         public decimal Price { get; set; }
 
-        [Required]
-        public string ImagePath { get; set; } = null!;
+        public string? ImagePath { get; set; } = null!;
 
         [Required]
         [MaxLength(ProductDescriptionMaxLength)]
@@ -32,8 +31,6 @@ namespace Herbg.ViewModels.Product
 
         [Required]
         public int CategoryId { get; set; }
-
-        public IFormFile? ImageFile { get; set; }
 
         // Optional: To allow users to assign sizes to do if time is left
         public List<int> ProductSizeIds { get; set; } = new List<int>();

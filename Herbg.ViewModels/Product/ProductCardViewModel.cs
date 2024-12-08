@@ -20,7 +20,7 @@ public class ProductCardViewModel
     public string Description { get; set; } = null!;
 
     [Required]
-    public string ImagePath { get; set; } = null!;
+    public string? ImagePath { get; set; } = null!;
 
     [Required]
     [Range(ProductPriceMinvalue, ProductPriceMaxValue, ErrorMessage = ProductPriceErrorMessage)]
