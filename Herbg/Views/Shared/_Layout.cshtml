@@ -70,35 +70,8 @@
         </div>
     </footer>
 
-    <script>
-        function updateCartItemCount() {
-            $.get("/Cart/GetCartItemCount", function(cartItemCount) {
-                $('#cartItemCount').text(cartItemCount); // Update the cart count dynamically
-            }).fail(function() {
-                console.error("Failed to fetch cart item count.");
-            });
-        }
-
-        function updateWishlistItemCount() {
-            $.get("/Wishlist/GetWishlistItemCount", function(wishlistItemCount) {
-                $('#wishListItemCount').text(wishlistItemCount); // Update the wishlist count dynamically
-            }).fail(function() {
-                console.error("Failed to fetch wishlist item count.");
-            });
-        }
-
-        // Call these functions when the page loads
-        $(document).ready(function() {
-            updateCartItemCount(); // Initial load for cart
-            updateWishlistItemCount(); // Initial load for wishlist
-
-            // Optional: Trigger updates when forms are submitted
-            $('form').submit(function() {
-                updateCartItemCount(); // Update cart count after form submit
-                updateWishlistItemCount(); // Update wishlist count after form submit
-            });
-        });
-    </script>
+        
+ 
 
    
    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
