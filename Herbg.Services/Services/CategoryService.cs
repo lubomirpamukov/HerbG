@@ -16,6 +16,7 @@ public class CategoryService(IRepository<Category> category) : ICategoryService
     private readonly IRepository<Category> _category = category;
     public async Task<ICollection<CategoryCardViewModel>> GetAllCategoriesAsync()
     {
+
         var categories = await _category
             .GetAllAttached()
             .Select(c => new CategoryCardViewModel

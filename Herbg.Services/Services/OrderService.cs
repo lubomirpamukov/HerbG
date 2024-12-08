@@ -2,11 +2,6 @@
 using Herbg.Models;
 using Herbg.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Herbg.ViewModels.Order;
 
 
@@ -129,23 +124,26 @@ public class OrderService(IRepository<Cart> cart, IRepository<Order>order) : IOr
 
     public async Task<OrderDetailsViewModel> GetOrderDetailsAsync(string orderId)
     {
-        //Finds order and includes all needed tables
-        var order = await _order
-            .GetAllAttached()
-            .Where(o => o.Id == orderId)
-            .Include(op => op.ProductOrders)
-            .ThenInclude(po => po.Product)
-            .Include(o => o.Client)
-            .FirstOrDefaultAsync();
+		//Finds order and includes all needed tables
+		var order = await _order
+	        .GetAllAttached()
+	        .Where(o => o.Id == orderId)
+	        .Include(op => op.ProductOrders)
+	        .ThenInclude(po => po.Product)
+	        .Include(o => o.Client)
+	        .FirstOrDefaultAsync();
 
-        //Check if order exist
-        if (order == null)
+
+
+		//Check if order exist
+		if (order == null)
         {
             return null;
         }
 
-        //Crate order view model
-        var orderDetailsViewModel = new OrderDetailsViewModel
+
+		//Crate order view model
+		var orderDetailsViewModel = new OrderDetailsViewModel
         {
             OrderId = order.Id,
             Date = order.Date,
