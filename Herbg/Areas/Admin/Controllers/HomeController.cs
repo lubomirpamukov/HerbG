@@ -40,6 +40,7 @@ public class HomeController : Controller
         return View(products);
     }
 
+    //Refactor to work with service and write tests
     public async Task<IActionResult> DeleteProduct(int productId) 
     {
         //Find the product for deletion
@@ -75,6 +76,7 @@ public class HomeController : Controller
         return RedirectToAction("Index", "Home", new {area = "Admin"});
     }
 
+    //Refactor to work with service and write tests
     [HttpGet]
     public IActionResult EditProduct(int productId)
     {
@@ -107,7 +109,7 @@ public class HomeController : Controller
         return View(model);
     }
 
-
+    //Refactor to work with service and write tests
     [HttpPost]
     public async Task<IActionResult> EditProduct(CreateProductViewModel model) 
     {
@@ -154,6 +156,7 @@ public class HomeController : Controller
         return RedirectToAction("Index", "Home", new { area = "Admin" });
     }
 
+    //Refactor to work with service and write tests
     [HttpGet]
     public async Task<IActionResult> AddProduct() 
     {
@@ -181,6 +184,7 @@ public class HomeController : Controller
         return View(createProductViewModel);
     }
 
+    //Refactor to work with service and write tests
     [HttpPost]
     public async Task<IActionResult> AddProduct(CreateProductViewModel model)
     {
