@@ -14,33 +14,37 @@
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 g-3 mt-auto justify-content-around">
 
                 <p class="card-text col-1">$@Model.Price</p>
-               
-                @if (User.IsInRole("Admin"))
+                @if (User?.Identity?.IsAuthenticated ?? false)
                 {
-                    <form  asp-area="Admin" asp-controller="Home" asp-action="Delete" method="post">
-                        <input type="hidden" name="productId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-danger">
-                            Delete
-                        </button>
-                    </form>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <form asp-area="Admin" asp-controller="Home" asp-action="Delete" method="post">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-danger">
+                                Delete
+                            </button>
+                        </form>
 
-                    <form asp-area="Admin" asp-controller="Home" asp-action="EditProduct" method="get">
-                        <input type="hidden" name="productId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-secondary"> Edit </button>
-                    </form>
-                }else
-                {
-                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
-                        <input type="hidden" name="id" value="@Model.Id" />
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </form>
-                    <form asp-controller="Wishlist" asp-action="Add" method="post" >
-                        <input type="hidden" name="productId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-secondary">
-                            <i class="fas fa-heart"></i>
-                        </button>
-                    </form>
+                        <form asp-area="Admin" asp-controller="Home" asp-action="EditProduct" method="get">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-secondary"> Edit </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </form>
+                        <form asp-controller="Wishlist" asp-action="Add" method="post">
+                            <input type="hidden" name="productId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </form>
+                    }
                 }
+               
 
             </div>
 
