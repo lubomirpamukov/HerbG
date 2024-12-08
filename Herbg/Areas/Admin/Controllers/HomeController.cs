@@ -96,11 +96,11 @@ public class HomeController : Controller
             Description = product.Description,
             ImagePath = product.ImagePath,
             CategoryId = product.CategoryId,
-            ManufactorerId = product.ManufactorerId,  // Set ManufacturerId
-                                                      // Other properties...
+            ManufactorerId = product.ManufactorerId,  
+                                                     
         };
 
-        // Pass categories and manufacturers to ViewBag
+        
         ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name", model.CategoryId);
         ViewBag.Manufacturers = new SelectList(_context.Manufactorers, "Id", "Name", model.ManufactorerId);
 
@@ -147,28 +147,11 @@ public class HomeController : Controller
         productToEdit.CategoryId = model.CategoryId;
         productToEdit.Price = model.Price;
         productToEdit.ManufactorerId = model.ManufactorerId;
-
-        //Checking for image file
-        if (model.ImageFile!= null)
-        {
-            //If it dosnt exist
-            var fileName = $"{Guid.NewGuid}_{model.ImageFile.FileName}"; // creating a unique name
-
-            //Creating path to the wwwroot
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "/wwwroot/images/products", fileName);
-
-            //Open a stream to transfer the file binary to the wwwroot/images/products directory
-            using (var stream = new FileStream(filePath, FileMode.Create)) 
-            {
-                await model.ImageFile.CopyToAsync(stream);
-            }
-
-            productToEdit.ImagePath = $"/images/products/{fileName}";
-        }
+        productToEdit.ImagePath = model.ImagePath;
 
         await _context.SaveChangesAsync();
 
-        return RedirectToAction("Index", "Product", new { area = "Admin" });
+        return RedirectToAction("Index", "Home", new { area = "Admin" });
     }
 
     [HttpGet]
@@ -199,17 +182,17 @@ public class HomeController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddProduct(CreateProductViewModel model, IFormFile ImageFile)
+    public async Task<IActionResult> AddProduct(CreateProductViewModel model)
     {
         // Check if the model state is valid
         if (!ModelState.IsValid)
         {
-            // Repopulate dropdowns in case of validation errors
+            // Repopulate dropdowns
             ViewBag.Manufacturers = await _context.Manufactorers
                 .Select(m => new SelectListItem
                 {
                     Value = m.Id.ToString(),
-                    Text = m.Name,
+                    Text = m.Name
                 })
                 .ToListAsync();
 
@@ -217,7 +200,7 @@ public class HomeController : Controller
                 .Select(c => new SelectListItem
                 {
                     Value = c.Id.ToString(),
-                    Text = c.Name,
+                    Text = c.Name
                 })
                 .ToListAsync();
 
@@ -232,45 +215,14 @@ public class HomeController : Controller
             Description = model.Description,
             ManufactorerId = model.ManufactorerId,
             CategoryId = model.CategoryId,
+            ImagePath = model.ImagePath  // Directly use the ImagePath URL entered by the user
         };
 
-        // Check if the image file is not null and save the image
-        if (model.ImageFile != null)
-        {
-            try
-            {
-                var directoryPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products");
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-
-                var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(model.ImageFile.FileName)}";
-                var filePath = Path.Combine(directoryPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await model.ImageFile.CopyToAsync(stream);
-                }
-
-                newProduct.ImagePath = $"/images/products/{fileName}";
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "An error occurred while uploading the image.");
-                // Log the exception (use a logger like Serilog, NLog, etc.)
-                Console.WriteLine(ex.Message);
-                return View(model);
-            }
-
-        }
-
-        // Add the new product to the database
+        // Save product to the database
         _context.Products.Add(newProduct);
         await _context.SaveChangesAsync();
 
-        // Redirect to the product index page after adding the product
-        return RedirectToAction("Index", "Product", new { area = "Admin" });
+        return RedirectToAction("Index", "Home", new { area = "Admin" });
     }
 
 }
