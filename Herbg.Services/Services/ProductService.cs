@@ -26,7 +26,7 @@ public class ProductService(IRepository<Product> product) : IProductService
                  Id = p.Id,
                  Name = p.Name,
                  Description = p.Description,
-                 ImagePath = p.ImagePath,
+                 ImagePath = p.ImagePath!,
                  Price = p.Price
              })
              .ToArrayAsync(); 
@@ -39,6 +39,8 @@ public class ProductService(IRepository<Product> product) : IProductService
 
         return productToAdd!;
     }
+
+    
 
     public async Task<ProductDetailsViewModel> GetProductDetailsAsync(int productId)
     {
@@ -55,7 +57,7 @@ public class ProductService(IRepository<Product> product) : IProductService
                 Name = p.Name,
                 Category = p.Category.Name,
                 Description = p.Description,
-                ImagePath = p.ImagePath,
+                ImagePath = p.ImagePath!,
                 Price = p.Price,
                 Manufactorer = p.Manufactorer.Name,
                 Reviews = p.Reviews.Select(r => new ReviewViewModel
@@ -93,7 +95,7 @@ public class ProductService(IRepository<Product> product) : IProductService
                 Id = product.Id,
                 Name = product.Name,
                 Description = product.Description,
-                ImagePath = product.ImagePath,
+                ImagePath = product.ImagePath!,
                 Price = product.Price
             };
 
