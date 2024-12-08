@@ -1,9 +1,4 @@
-﻿using Herbg.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 
 namespace Herbg.Infrastructure.Interfaces;
 
@@ -31,9 +26,9 @@ public interface IRepository<T> where T : class
 
     public Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize);
 
-    public Task<bool> AnyAsync(Func<T, bool> predicate);
+    public Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);
 
     public Task<int> CountAsync();
 
-
+    public Task<bool>SaveChangesAsync();
 }

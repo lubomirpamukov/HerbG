@@ -1,11 +1,7 @@
 ﻿using Herbg.Data;
 using Herbg.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Linq.Expressions;
 
 namespace Herbg.Infrastructure;
 
@@ -44,17 +40,17 @@ public class Repository<T> : IRepository<T> where T : class
         return true;
     }
 
-    public async Task<bool> AnyAsync(Func<T, bool> predicate)
-    {
-        if (predicate == null)
-        {
-            throw new ArgumentNullException(nameof(predicate));
-        }
+	public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
+	{
+		if (predicate == null)
+		{
+			throw new ArgumentNullException(nameof(predicate));
+		}
 
-        return await _dbSet.AnyAsync(x => predicate(x));
-    }
+		return await _dbSet.AnyAsync(predicate);
+	}
 
-    public async Task<int> CountAsync()
+	public async Task<int> CountAsync()
     {
         return await _dbSet.CountAsync();
     }
@@ -63,7 +59,7 @@ public class Repository<T> : IRepository<T> where T : class
     {
         if (entity == null)
         {
-            throw new ArgumentNullException(nameof(entity), "can't be null");
+            return false;
         };
 
         _dbSet.Remove(entity);
@@ -75,7 +71,7 @@ public class Repository<T> : IRepository<T> where T : class
     {
         if (entities == null)
         {
-            throw new ArgumentNullException(nameof(entities), "can't be null");
+            return false;
         };
 
         _dbSet.RemoveRange(entities);
@@ -106,7 +102,13 @@ public class Repository<T> : IRepository<T> where T : class
         throw new NotImplementedException();
     }
 
-    public Task<bool> SoftDeleteAsync(T entity)
+	public async Task<bool>SaveChangesAsync()
+	{
+        await _context.SaveChangesAsync();
+        return true;
+	}
+
+	public Task<bool> SoftDeleteAsync(T entity)
     {
         throw new NotImplementedException();
     }
@@ -120,7 +122,7 @@ public class Repository<T> : IRepository<T> where T : class
     {
         if (entity == null)
         {
-            throw new ArgumentNullException(nameof(entity), "can't be null");
+            return false;
         };
 
         _dbSet.Update(entity);
