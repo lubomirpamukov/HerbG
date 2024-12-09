@@ -16,16 +16,40 @@ public class ProductService(IRepository<Product> product) : IProductService
 {
     private readonly IRepository<Product> _product = product;
 
-    public async Task<ICollection<ProductCardViewModel>> GetAllProductsAsync(string? searchQuery = null)
+    public async Task<ICollection<ProductCardViewModel>> GetAllProductsAsync(
+    string? searchQuery = null,
+    string? category = null,
+    string? manufactorer = null)
     {
         var products = _product
             .GetAllAttached()
-            .Where(p => !p.IsDeleted); // Always filter out deleted products
+            .Include(p => p.Category)
+            .Include(p => p.Manufactorer)
+            .Where(p => !p.IsDeleted);
 
+        // Apply search query filter
         if (!string.IsNullOrWhiteSpace(searchQuery))
         {
             searchQuery = searchQuery.ToLower().Trim();
             products = products.Where(p => p.Name.ToLower().Contains(searchQuery));
+        }
+
+        // Apply category filter
+        if (!string.IsNullOrWhiteSpace(category))
+        {
+            category = category.ToLower().Trim();
+            products = products.Where(p =>
+                p.Category != null &&
+                p.Category.Name.ToLower().Contains(category));
+        }
+
+        // Apply manufacturer filter
+        if (!string.IsNullOrWhiteSpace(manufactorer))
+        {
+            manufactorer = manufactorer.ToLower().Trim();
+            products = products.Where(p =>
+                p.Manufactorer != null &&
+                p.Manufactorer.Name.ToLower().Contains(manufactorer));
         }
 
         var productView = await products
@@ -34,13 +58,14 @@ public class ProductService(IRepository<Product> product) : IProductService
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
-                ImagePath = p.ImagePath ?? "default-image-path.jpg", // Provide default value if needed
+                ImagePath = p.ImagePath ?? "default-image-path.jpg",
                 Price = p.Price
             })
             .ToArrayAsync();
 
         return productView;
     }
+
 
 
     public async Task<Product> GetProductByIdAsync(int productId)

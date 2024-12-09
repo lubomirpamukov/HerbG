@@ -22,10 +22,17 @@ public class CategoryService(IRepository<Category> category) : ICategoryService
             {
                 Id = c.Id,
                 Name = c.Name,
-                ImagePath = c.ImagePath,
+                ImagePath = c.ImagePath!,
                 Description = c.Description
             })
             .ToArrayAsync();
         return categories;
+    }
+
+    public async Task<IEnumerable<string>> GetCategoriesNamesAsync()
+    {
+        return await _category.GetAllAttached()
+            .Select(c => c.Name)
+            .ToArrayAsync();
     }
 }
