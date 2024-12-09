@@ -40,16 +40,6 @@ public class Repository<T> : IRepository<T> where T : class
         return true;
     }
 
-	public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
-	{
-		if (predicate == null)
-		{
-			throw new ArgumentNullException(nameof(predicate));
-		}
-
-		return await _dbSet.AnyAsync(predicate);
-	}
-
 	public async Task<int> CountAsync()
     {
         return await _dbSet.CountAsync();
@@ -77,6 +67,12 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet.RemoveRange(entities);
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<T?> FindByConditionAsync(Expression<Func<T, bool>> predicate)
+    {
+        T? entity = await this._dbSet.FirstOrDefaultAsync(predicate);
+        return entity;
     }
 
     public async Task<T?> FindByIdAsync(object id)

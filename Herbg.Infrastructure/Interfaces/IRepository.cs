@@ -26,7 +26,7 @@ public interface IRepository<T> where T : class
 
     public Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize);
 
-    public Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);
+    public Task<T?> FindByConditionAsync(Expression<Func<T, bool>> predicate);
 
     public Task<int> CountAsync();
 
