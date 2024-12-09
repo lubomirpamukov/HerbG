@@ -13,6 +13,14 @@
 <div class="container mt-5">
     <h2 class="text-center mb-4">Shop</h2>
 
+    <!-- Search Bar -->
+    <form method="get" asp-action="Index" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="searchQuery" placeholder="Search products..." value="@Context.Request.Query["searchQuery"]" />
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+
     <!-- Add Product Button -->
     <div class="mb-4 text-center">
         <a asp-area="Admin" asp-controller="Home" asp-action="AddProduct" class="btn btn-primary">

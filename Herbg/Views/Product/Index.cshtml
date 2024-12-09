@@ -13,11 +13,19 @@
 <div class="container mt-5">
     <h2 class="text-center mb-4">Shop</h2>
 
+    <!-- Search Bar -->
+    <form method="get" asp-action="Index" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="searchQuery" placeholder="Search products..." value="@Context.Request.Query["searchQuery"]" />
+            <button class="btn btn-primary" type="submit">Search</button>
+        </div>
+    </form>
+
     <!-- Product Grid -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         @foreach (var product in Model)
         {
-           @await Html.PartialAsync("_ProductPartialView", product)
+            @await Html.PartialAsync("_ProductPartialView", product)
         }
     </div>
 </div>

@@ -12,7 +12,7 @@ public interface IProductService
 {
     public Task<Product> GetProductByIdAsync(int productId);
 
-    public Task<ICollection<ProductCardViewModel>> GetAllProductsAsync();
+    public Task<ICollection<ProductCardViewModel>> GetAllProductsAsync(string? searchQuery = null);
 
     public Task<ProductDetailsViewModel> GetProductDetailsAsync(int productId);
 

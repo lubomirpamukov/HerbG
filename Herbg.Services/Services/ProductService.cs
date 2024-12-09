@@ -16,22 +16,32 @@ public class ProductService(IRepository<Product> product) : IProductService
 {
     private readonly IRepository<Product> _product = product;
 
-    public async Task<ICollection<ProductCardViewModel>> GetAllProductsAsync()
+    public async Task<ICollection<ProductCardViewModel>> GetAllProductsAsync(string? searchQuery = null)
     {
-        var products = await _product
-             .GetAllAttached()
-             .Where(p => p.IsDeleted == false)
-             .Select(p => new ProductCardViewModel
-             {
-                 Id = p.Id,
-                 Name = p.Name,
-                 Description = p.Description,
-                 ImagePath = p.ImagePath!,
-                 Price = p.Price
-             })
-             .ToArrayAsync(); 
-        return products;
+        var products = _product
+            .GetAllAttached()
+            .Where(p => !p.IsDeleted); // Always filter out deleted products
+
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            searchQuery = searchQuery.ToLower().Trim();
+            products = products.Where(p => p.Name.ToLower().Contains(searchQuery));
+        }
+
+        var productView = await products
+            .Select(p => new ProductCardViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                ImagePath = p.ImagePath ?? "default-image-path.jpg", // Provide default value if needed
+                Price = p.Price
+            })
+            .ToArrayAsync();
+
+        return productView;
     }
+
 
     public async Task<Product> GetProductByIdAsync(int productId)
     {

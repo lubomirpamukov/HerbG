@@ -11,11 +11,10 @@ public class ProductController(IProductService productService) : Controller
 {
     private readonly IProductService _productService = productService;
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string? searchQuery = null)
     {
-        var products = await _productService.GetAllProductsAsync();
-
-
+        var products = await _productService.GetAllProductsAsync(searchQuery);
+        ViewData["SearchQuery"] = searchQuery;
         return View(products);
     }
 
