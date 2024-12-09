@@ -7,14 +7,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Herbg.Controllers;
 
-public class ProductController(IProductService productService) : Controller
+public class ProductController(IProductService productService, ICategoryService categoryService,IManufactorerService manufactorerService) : Controller
 {
     private readonly IProductService _productService = productService;
+    private readonly ICategoryService _categoryService = categoryService;
+    private readonly IManufactorerService _manufactorerService = manufactorerService;
 
-    public async Task<IActionResult> Index(string? searchQuery = null)
+    public async Task<IActionResult> Index(
+        string? searchQuery = null,
+        string? category = null,
+        string? manufactorer = null)
     {
-        var products = await _productService.GetAllProductsAsync(searchQuery);
+        var products = await _productService.GetAllProductsAsync(searchQuery,category, manufactorer);
+        var categories = await _categoryService.GetCategoriesNamesAsync();
+        var manufactorers = await _manufactorerService.GetManufactorersNamesAsync();
+
         ViewData["SearchQuery"] = searchQuery;
+        ViewData["Categories"] = categories;
+        ViewData["Manufactorers"] = manufactorers;
+
         return View(products);
     }
 
