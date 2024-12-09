@@ -40,8 +40,28 @@ public class HomeController : Controller
         return View(products);
     }
 
+    [HttpGet]
+    public async Task<IActionResult> DeleteProduct(int productId)
+    {
+        var item = await _context.Products.FindAsync(productId); 
+        if (item == null)
+        {
+            return NotFound();
+        }
+
+        var model = new DeleteConfirmationViewModel
+        {
+            ItemId = item.Id,
+            ItemName = item.Name,
+            ItemDescription = item.Description
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
     //Refactor to work with service and write tests
-    public async Task<IActionResult> DeleteProduct(int productId) 
+    public async Task<IActionResult> ConfirmDelete(int productId) 
     {
         //Find the product for deletion
         var productToDelete = await _context.Products

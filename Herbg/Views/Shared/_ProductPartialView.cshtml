@@ -18,7 +18,7 @@
                 {
                     @if (User.IsInRole("Admin"))
                     {
-                        <form asp-area="Admin" asp-controller="Home" asp-action="DeleteProduct" method="post">
+                        <form asp-area="Admin" asp-controller="Home" asp-action="DeleteProduct" method="get">
                             <input type="hidden" name="productId" value="@Model.Id" />
                             <button type="submit" class="btn btn-danger">
                                 Delete
@@ -33,7 +33,7 @@
                     else
                     {
                         <form asp-controller="Cart" asp-action="AddToCart" method="post">
-                            <input type="hidden" name="id" value="@Model.Id" />
+                            <input type="hidden" name="productId" value="@Model.Id" />
                             <button type="submit" class="btn btn-primary">Add</button>
                         </form>
                         <form asp-controller="Wishlist" asp-action="Add" method="post">
