@@ -71,7 +71,7 @@ namespace Herbg.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddToCart(int id, int quantity = 1)
+        public async Task<IActionResult> AddToCart(int productId, int quantity = 1)
         {
             var clientId = _userManager.GetUserId(User);
 
@@ -85,7 +85,7 @@ namespace Herbg.Controllers
             if (User?.Identity?.IsAuthenticated ?? false) 
             {
                 //User is registered
-                var isProducAdded = await _cartService.AddItemToCartAsync(clientId, id, quantity);
+                var isProducAdded = await _cartService.AddItemToCartAsync(clientId, productId, quantity);
                 if (!isProducAdded)
                 {
                     return NotFound();
