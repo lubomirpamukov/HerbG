@@ -49,4 +49,10 @@ public class HomeController(ICategoryService category, IProductService product) 
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    public IActionResult Subscribe() 
+    {
+        //To do: add email collector service
+        return View();
+    }
 }

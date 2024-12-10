@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Thank You for Subscribing";
+}
+
+<div class="container text-center py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Card for Thank You Message -->
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5">
+                    <!-- Icon -->
+                    <div class="text-success mb-4">
+                        <i class="bi bi-check-circle-fill" style="font-size: 3rem;"></i>
+                    </div>
+
+                    <!-- Thank You Header -->
+                    <h1 class="fw-bold text-dark">Thank You!</h1>
+                    <p class="mt-3 text-muted">
+                        You’ve successfully subscribed to HerbG. Get ready to receive the latest updates, tips, and special offers on our finest herbs!
+                    </p>
+
+                    <!-- Action Button -->
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-success btn-lg mt-4">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -67,11 +67,60 @@
         </main>
     </div>
 
-    <footer class="bg-light text-center text-lg-start mt-5">
-        <div class="container p-4">
-            <p>&copy; 2024 Herbg. All rights reserved.</p>
+    <footer class="bg-success text-white py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Company Info -->
+                <div class="col-md-4 mb-4">
+                    <h5 class="fw-bold">About HerbG</h5>
+                    <p>HerbG is your trusted source for the finest herbs from around the world. Sustainably sourced, lovingly packaged, and delivered fresh to your doorstep.</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-md-2 mb-4">
+                    <h5 class="fw-bold">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index" class="text-white text-decoration-none">Home</a></li>
+                        <li><a asp-area="" asp-controller="Product" asp-action="Index" class="text-white text-decoration-none">Shop</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="About" class="text-white text-decoration-none">About Us</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Contact" class="text-white text-decoration-none">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="col-md-3 mb-4">
+                    <h5 class="fw-bold">Contact Us</h5>
+                    <p><i class="bi bi-geo-alt-fill"></i> 123 Green Lane, Herbsville, Natureland</p>
+                    <p><i class="bi bi-telephone-fill"></i> +1-800-123-HERB</p>
+                    <p><i class="bi bi-envelope-fill"></i> support@herbg.com</p>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="col-md-3">
+                    <h5 class="fw-bold">Subscribe to Our Newsletter</h5>
+                    <form asp-area="" asp-controller="Home" asp-action="Subscribe" method="post">
+                        <div class="input-group">
+                            <input type="email" name="Email" class="form-control" placeholder="Enter your email" required>
+                            <button type="submit" class="btn btn-dark">Subscribe</button>
+                        </div>
+                    </form>
+                    <div class="mt-3">
+                        <h6>Follow Us:</h6>
+                        <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white me-2"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-white me-2"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-light">
+            <div class="text-center">
+                <p class="mb-0">&copy; @DateTime.Now.Year HerbG. All Rights Reserved.</p>
+            </div>
         </div>
     </footer>
+
 
         
  
