@@ -97,6 +97,8 @@ public class ProductService(
     {
         return await _product
             .GetAllAttached()
+            .Where(p => p.IsDeleted == false)
+            .Take(4)
             .Select(p => new ProductCardViewModel
             {
                 Id = p.Id,
