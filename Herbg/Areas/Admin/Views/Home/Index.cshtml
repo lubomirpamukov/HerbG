@@ -13,20 +13,58 @@
 <div class="container mt-5">
     <h2 class="text-center mb-4">Shop</h2>
 
-    <!-- Search Bar -->
+    <!-- Search Bar and Filters -->
     <form method="get" asp-action="Index" class="mb-4">
-        <div class="input-group">
-            <input type="text" class="form-control" name="searchQuery" placeholder="Search products..." value="@Context.Request.Query["searchQuery"]" />
-            <button class="btn btn-primary" type="submit">Search</button>
+        <div class="row g-2 align-items-center">
+            <!-- Category Filter -->
+            <div class="col-md-2">
+                <select class="form-select" name="category">
+                    <option value="">All Categories</option>
+                    @foreach (var category in (ViewData["Categories"] as IEnumerable<string>))
+                    {
+                        if (Context.Request.Query["category"] == category)
+                        {
+                            <option value="@category" selected>@category</option>
+                        }
+                        else
+                        {
+                            <option value="@category">@category</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Manufacturer Filter -->
+            <div class="col-md-2">
+                <select class="form-select" name="manufactorer">
+                    <option value="">All Manufacturers</option>
+                    @foreach (var manufacturer in (ViewData["Manufactorers"] as IEnumerable<string>))
+                    {
+                        if (Context.Request.Query["manufactorer"] == manufacturer)
+                        {
+                            <option value="@manufacturer" selected>@manufacturer</option>
+                        }
+                        else
+                        {
+                            <option value="@manufacturer">@manufacturer</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Search Filter -->
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="searchQuery" placeholder="Search products..." value="@Context.Request.Query["searchQuery"]" />
+            </div>
+
+            <!-- Submit Button with Magnifying Glass Icon -->
+            <div class="col-md-1 text-center">
+                <button class="btn btn-primary w-100" type="submit">
+                    <i class="fas fa-search "></i> <!-- Bootstrap Icon for search -->
+                </button>
+            </div>
         </div>
     </form>
-
-    <!-- Add Product Button -->
-    <div class="mb-4 text-center">
-        <a asp-area="Admin" asp-controller="Home" asp-action="AddProduct" class="btn btn-primary">
-            Add Product
-        </a>
-    </div>
 
     <!-- Product Grid -->
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
@@ -35,4 +73,55 @@
             @await Html.PartialAsync("~/Views/Shared/_ProductPartialView.cshtml", product)
         }
     </div>
+
+    <!-- Pagination -->
+    @if (ViewData["TotalPages"] != null && (int)ViewData["TotalPages"] > 1)
+    {
+        int currentPage = (int)ViewData["CurrentPage"];
+        int totalPages = (int)ViewData["TotalPages"];
+
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <!-- Previous Button -->
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-pageNumber="@(currentPage - 1)"
+                       asp-route-searchQuery="@ViewData["SearchQuery"]"
+                       asp-route-category="@ViewData["Category"]"
+                       asp-route-manufactorer="@ViewData["Manufactorer"]">
+                        Previous
+                    </a>
+                </li>
+
+                <!-- Page Numbers -->
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(currentPage == i ? "active" : "")">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-pageNumber="@i"
+                           asp-route-searchQuery="@ViewData["SearchQuery"]"
+                           asp-route-category="@ViewData["Category"]"
+                           asp-route-manufactorer="@ViewData["Manufactorer"]">
+                            @i
+                        </a>
+                    </li>
+                }
+
+                <!-- Next Button -->
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-pageNumber="@(currentPage + 1)"
+                       asp-route-searchQuery="@ViewData["SearchQuery"]"
+                       asp-route-category="@ViewData["Category"]"
+                       asp-route-manufactorer="@ViewData["Manufactorer"]">
+                        Next
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+
 </div>
