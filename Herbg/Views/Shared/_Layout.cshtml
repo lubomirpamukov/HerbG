@@ -14,7 +14,7 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
-                <a asp-controller="Home" asp-action="" class="navbar-brand">Herb Haven</a>
+                <a asp-area="" asp-controller="Home" asp-action="" class="navbar-brand">Herb Haven</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -26,11 +26,11 @@
                         }
                         else 
                         {
-                            <li class="nav-item"><a asp-controller="Home" asp-action="Index" class="nav-link">Home</a></li>
-                            <li class="nav-item"> <a asp-controller="Category" asp-action="Index" class="nav-link">Categories</a></li>
-                            <li class="nav-item"><a asp-controller="Product" asp-action="Index" class="nav-link">Shop</a></li>
-                            <li class="nav-item"><a asp-controller="Home" asp-action="About" class="nav-link">About</a></li>
-                            <li class="nav-item"><a asp-controller="Home" asp-action="Contact" class="nav-link">Contact</a></li>
+                            <li class="nav-item"><a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link">Home</a></li>
+                            <li class="nav-item"> <a asp-area="" asp-controller="Category" asp-action="Index" class="nav-link">Categories</a></li>
+                            <li class="nav-item"><a asp-area="" asp-controller="Product" asp-action="Index" class="nav-link">Shop</a></li>
+                            <li class="nav-item"><a asp-area=""  asp-controller="Home" asp-action="About" class="nav-link">About</a></li>
+                            <li class="nav-item"><a asp-area="" asp-controller="Home" asp-action="Contact" class="nav-link">Contact</a></li>
                         }
 
 
@@ -40,14 +40,14 @@
                             @if (!User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a asp-controller="Wishlist" asp-action="Index" class="nav-link">
+                                    <a asp-area="" asp-controller="Wishlist" asp-action="Index" class="nav-link">
                                         <i class="fas fa-heart fs-4"></i>
                                         <span class="position-absolute top-30 start-90 translate-middle badge rounded-pill bg-danger" id="wishListItemCount">0</span> <!-- This will be updated via AJAX -->
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a asp-controller="Cart" asp-action="Index" class="nav-link">
+                                    <a asp-area="" asp-controller="Cart" asp-action="Index" class="nav-link">
                                         <i class="fas fa-shopping-cart fs-4"></i>
                                         <span class="position-absolute top-30 start-90 translate-middle badge rounded-pill bg-danger" id="cartItemCount">0</span> <!-- This will be updated via AJAX -->
                                     </a>
