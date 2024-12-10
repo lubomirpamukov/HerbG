@@ -18,7 +18,7 @@ public class HomeController(ICategoryService category, IProductService product) 
     public async Task<IActionResult> Index()
     {
         var categoreis = await _category.GetAllCategoriesAsync();
-        var (products, totalPages) = await _product.GetAllProductsAsync();
+        var products = await _product.GetHomePageProductsAsync();
        
         var viewModel = new CategoryProductHomeViewModel
         {
