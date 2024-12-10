@@ -14,20 +14,26 @@ public class ProductController(IProductService productService, ICategoryService 
     private readonly IManufactorerService _manufactorerService = manufactorerService;
 
     public async Task<IActionResult> Index(
-        string? searchQuery = null,
-        string? category = null,
-        string? manufactorer = null)
+     string? searchQuery = null,
+     string? category = null,
+     string? manufactorer = null,
+     int pageNumber = 1,int pageSize = 3)
     {
-        var products = await _productService.GetAllProductsAsync(searchQuery,category, manufactorer);
+        var (products, totalPages) = await _productService.GetAllProductsAsync(
+            searchQuery, category, manufactorer, pageNumber, pageSize);
+
         var categories = await _categoryService.GetCategoriesNamesAsync();
         var manufactorers = await _manufactorerService.GetManufactorersNamesAsync();
 
         ViewData["SearchQuery"] = searchQuery;
         ViewData["Categories"] = categories;
         ViewData["Manufactorers"] = manufactorers;
+        ViewData["CurrentPage"] = pageNumber;
+        ViewData["TotalPages"] = totalPages;
 
         return View(products);
     }
+
 
     public async Task<IActionResult> Details(int id) 
     {

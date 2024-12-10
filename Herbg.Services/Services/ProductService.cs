@@ -1,9 +1,11 @@
-﻿using Herbg.Infrastructure.Interfaces;
+﻿using Azure;
+using Herbg.Infrastructure.Interfaces;
 using Herbg.Models;
 using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Product;
 using Herbg.ViewModels.Review;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +18,11 @@ public class ProductService(IRepository<Product> product) : IProductService
 {
     private readonly IRepository<Product> _product = product;
 
-    public async Task<ICollection<ProductCardViewModel>> GetAllProductsAsync(
-    string? searchQuery = null,
-    string? category = null,
-    string? manufactorer = null)
+    public async Task<(ICollection<ProductCardViewModel> Movies, int totalPages)> GetAllProductsAsync(
+        string? searchQuery = null,
+        string? category = null,
+        string? manufactorer = null,
+        int pageNumber = 1, int pageSize = 3)
     {
         var products = _product
             .GetAllAttached()
@@ -52,6 +55,15 @@ public class ProductService(IRepository<Product> product) : IProductService
                 p.Manufactorer.Name.ToLower().Contains(manufactorer));
         }
 
+        //Calculate the total number of pages
+        int totalProducts = await products.CountAsync();
+        int totalPages = (int)Math.Ceiling(totalProducts / (double)pageSize);
+
+        //apply Pagination
+        products = products
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize);
+
         var productView = await products
             .Select(p => new ProductCardViewModel
             {
@@ -63,10 +75,9 @@ public class ProductService(IRepository<Product> product) : IProductService
             })
             .ToArrayAsync();
 
-        return productView;
+
+        return (productView, totalPages);
     }
-
-
 
     public async Task<Product> GetProductByIdAsync(int productId)
     {
