@@ -7,38 +7,42 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Reflection;
+using Herbg.Infrastructure.Interfaces;
+using Herbg.Services.Interfaces;
 
 namespace Herbg.Areas.Admin.Controllers;
 
 [Area("Admin")]
 [Authorize(Roles = "Admin")]
-public class HomeController : Controller
+public class HomeController(
+    IProductService productService,
+    ApplicationDbContext context,
+    UserManager<ApplicationUser> userManager) : Controller
 {
-    private readonly ApplicationDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ApplicationDbContext _context = context;
+    private readonly UserManager<ApplicationUser> _userManager = userManager;
+    private readonly IProductService _productService = productService;
 
-    public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    public async Task<IActionResult> Index(
+     string? searchQuery = null,
+     string? category = null,
+     string? manufactorer = null,
+     int pageNumber = 1,
+     int pageSize = 3)
     {
-        _context = context;
-        _userManager = userManager;
-    }
-    public async Task<IActionResult> Index()
-    {
-        var products = await _context.Products
-            .Where(p => p.IsDeleted == false)
-            .Select(p => new ProductCardViewModel
-            {
-                Id = p.Id,
-                Name = p.Name,
-                ImagePath = p.ImagePath,
-                Description = p.Description,
-                Price = p.Price
-            })
-            .ToArrayAsync();
+        var (products, totalPages, categories, manufactorers) = await _productService.GetAllProductsAsync(
+            searchQuery, category, manufactorer, pageNumber, pageSize);
 
+        ViewData["SearchQuery"] = searchQuery;
+        ViewData["Categories"] = categories;
+        ViewData["Manufactorers"] = manufactorers;
+        ViewData["CurrentPage"] = pageNumber;
+        ViewData["TotalPages"] = totalPages;
 
+        // Return the products to the view
         return View(products);
     }
+
 
     [HttpGet]
     public async Task<IActionResult> DeleteProduct(int productId)
