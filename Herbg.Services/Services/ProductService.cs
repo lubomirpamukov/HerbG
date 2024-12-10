@@ -4,6 +4,7 @@ using Herbg.Models;
 using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Product;
 using Herbg.ViewModels.Review;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -14,57 +15,67 @@ using System.Threading.Tasks;
 
 namespace Herbg.Services.Services;
 
-public class ProductService(IRepository<Product> product) : IProductService
+public class ProductService(
+    IRepository<Product> product,
+    ICategoryService category,
+    IManufactorerService manufactorer) : IProductService
 {
     private readonly IRepository<Product> _product = product;
+    private readonly ICategoryService _categoryService = category;
+    private readonly IManufactorerService _manufactorerService = manufactorer;
 
-    public async Task<(ICollection<ProductCardViewModel> Movies, int totalPages)> GetAllProductsAsync(
-        string? searchQuery = null,
-        string? category = null,
-        string? manufactorer = null,
-        int pageNumber = 1, int pageSize = 3)
+    public IQueryable<Product> ApplyFilters(IQueryable<Product> query, string? searchQuery, string? category, string? manufactorer)
     {
-        var products = _product
+        if (!string.IsNullOrWhiteSpace(searchQuery))
+        {
+            searchQuery = searchQuery.ToLower().Trim();
+            query = query.Where(p => p.Name.ToLower().Contains(searchQuery));
+        }
+
+        if (!string.IsNullOrWhiteSpace(category))
+        {
+            category = category.ToLower().Trim();
+            query = query.Where(p => p.Category != null && p.Category.Name.ToLower().Contains(category));
+        }
+
+        if (!string.IsNullOrWhiteSpace(manufactorer))
+        {
+            manufactorer = manufactorer.ToLower().Trim();
+            query = query.Where(p => p.Manufactorer != null && p.Manufactorer.Name.ToLower().Contains(manufactorer));
+        }
+
+        return query;
+    }
+
+    public async Task<(ICollection<ProductCardViewModel> Products, int TotalPages, IEnumerable<string> Categories, IEnumerable<string> Manufactorers)>
+     GetAllProductsAsync(
+         string? searchQuery = null,
+         string? category = null,
+         string? manufactorer = null,
+         int pageNumber = 1,
+         int pageSize = 3)
+    {
+        // Base query with includes
+        var productsQuery = _product
             .GetAllAttached()
             .Include(p => p.Category)
             .Include(p => p.Manufactorer)
             .Where(p => !p.IsDeleted);
 
-        // Apply search query filter
-        if (!string.IsNullOrWhiteSpace(searchQuery))
-        {
-            searchQuery = searchQuery.ToLower().Trim();
-            products = products.Where(p => p.Name.ToLower().Contains(searchQuery));
-        }
+        // Apply filtering
+        productsQuery = ApplyFilters(productsQuery, searchQuery, category, manufactorer);
 
-        // Apply category filter
-        if (!string.IsNullOrWhiteSpace(category))
-        {
-            category = category.ToLower().Trim();
-            products = products.Where(p =>
-                p.Category != null &&
-                p.Category.Name.ToLower().Contains(category));
-        }
-
-        // Apply manufacturer filter
-        if (!string.IsNullOrWhiteSpace(manufactorer))
-        {
-            manufactorer = manufactorer.ToLower().Trim();
-            products = products.Where(p =>
-                p.Manufactorer != null &&
-                p.Manufactorer.Name.ToLower().Contains(manufactorer));
-        }
-
-        //Calculate the total number of pages
-        int totalProducts = await products.CountAsync();
+        // Calculate total count and pages
+        int totalProducts = await productsQuery.CountAsync();
         int totalPages = (int)Math.Ceiling(totalProducts / (double)pageSize);
 
-        //apply Pagination
-        products = products
+        // Apply pagination
+        var pagedProducts = productsQuery
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize);
 
-        var productView = await products
+        // Map to view model
+        var productViewModels = await pagedProducts
             .Select(p => new ProductCardViewModel
             {
                 Id = p.Id,
@@ -75,8 +86,28 @@ public class ProductService(IRepository<Product> product) : IProductService
             })
             .ToArrayAsync();
 
+        // Retrieve categories and manufacturers
+        var categories = await _categoryService.GetCategoriesNamesAsync();
+        var manufactorers = await _manufactorerService.GetManufactorersNamesAsync();
 
-        return (productView, totalPages);
+        // Return data
+        return (productViewModels, totalPages, categories, manufactorers);
+    }
+
+    public async Task<ICollection<ProductCardViewModel>> GetHomePageProductsAsync()
+    {
+        return await _product
+            .GetAllAttached()
+            .Select(p => new ProductCardViewModel
+            {
+                Id = p.Id,
+                Name = p.Name,
+                ImagePath = p.ImagePath,
+                Description = p.Description,
+                Price = p.Price
+            }).ToArrayAsync();
+
+        
     }
 
     public async Task<Product> GetProductByIdAsync(int productId)
