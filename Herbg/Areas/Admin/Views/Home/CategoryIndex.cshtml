@@ -1,0 +1,42 @@
+﻿<div class="container mt-5">
+    <!-- Header -->
+    <div class="text-center mb-4">
+        <h1 class="display-5">All Categories</h1>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var category in Model)
+        {
+            <div class="col">
+                <div class="card d-flex flex-column h-100 text-center shadow-sm border-0">
+                    <!-- Display category image -->
+                    <img src="@category.ImagePath" class="card-img-top" alt="@category.Name" style="height: 150px; object-fit: cover;">
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@category.Name</h5>
+                        <p class="card-text">@category.Description</p>
+
+                        <!-- Button Container -->
+                        <div class="mt-auto d-flex justify-content-between">
+                            <form asp-area="Admin" asp-controller="Home" asp-action="AddCategory" method="post">
+                                <input type="hidden" name="categoryId" value="@category.Id" />
+                                <button type="submit" class="btn btn-primary">Add</button>
+                            </form>
+
+                            <form asp-area="Admin" asp-controller="Home" asp-action="EditCategory" method="post">
+                                <input type="hidden" name="categoryId" value="@category.Id" />
+                                <button type="submit" class="btn btn-secondary">Edit</button>
+                            </form>
+
+                            <form asp-area="Admin" asp-controller="Home" asp-action="DeleteCategory" method="post">
+                                <input type="hidden" name="categoryId" value="@category.Id" />
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

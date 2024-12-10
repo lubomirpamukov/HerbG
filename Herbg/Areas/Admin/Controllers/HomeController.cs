@@ -16,12 +16,14 @@ namespace Herbg.Areas.Admin.Controllers;
 [Authorize(Roles = "Admin")]
 public class HomeController(
     IProductService productService,
+    ICategoryService categoryService,
     ApplicationDbContext context,
     UserManager<ApplicationUser> userManager) : Controller
 {
     private readonly ApplicationDbContext _context = context;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly IProductService _productService = productService;
+    private readonly ICategoryService _categoryService = categoryService; 
 
     public async Task<IActionResult> Index(
      string? searchQuery = null,
@@ -251,6 +253,13 @@ public class HomeController(
         await _context.SaveChangesAsync();
 
         return RedirectToAction("Index", "Home", new { area = "Admin" });
+    }
+
+    public async Task<IActionResult> CategoryIndex() 
+    {
+        var categories = await _categoryService.GetAllCategoriesAsync();
+            
+        return View(categories);
     }
 
 }
