@@ -67,6 +67,13 @@
     </form>
 
     <!-- Product Grid -->
+
+    <form asp-area="Admin" asp-controller="Home" asp-action="AddProduct" method="get" class="mb-3">
+        <button type="submit" class="btn btn-primary">
+            Add Product
+        </button>
+    </form>
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         @foreach (var product in Model)
         {
