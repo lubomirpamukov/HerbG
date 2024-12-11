@@ -28,4 +28,6 @@ public interface IRepository<T> where T : class
     public Task<bool>SaveChangesAsync();
 
     DbContext GetDbContext();
+
+    void UpdateRange(IEnumerable<T> entities);
 }

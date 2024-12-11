@@ -117,4 +117,9 @@ public class Repository<T> : IRepository<T> where T : class
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async void UpdateRange(IEnumerable<T> entities)
+    {
+        _dbSet.UpdateRange(entities);
+    }
 }
