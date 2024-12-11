@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Herbg.ViewModels.Manufactorer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,4 +10,8 @@ namespace Herbg.Services.Interfaces;
 public interface IManufactorerService
 {
     public Task<IEnumerable<string>> GetManufactorersNamesAsync();
+
+    public Task<IEnumerable<ManufacturerViewModel>> GetManufacturersAsync();
+   
+
 }
