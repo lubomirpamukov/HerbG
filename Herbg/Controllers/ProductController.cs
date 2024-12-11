@@ -18,7 +18,7 @@ public class ProductController(IProductService productService, ICategoryService 
     string? category = null,
     string? manufactorer = null,
     int pageNumber = 1,
-    int pageSize = 3)
+    int pageSize = 8)
     {
         var (products, totalPages, categories, manufactorers) = await _productService.GetAllProductsAsync(
             searchQuery, category, manufactorer, pageNumber, pageSize);
