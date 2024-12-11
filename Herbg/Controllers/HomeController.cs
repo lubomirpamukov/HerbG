@@ -55,4 +55,23 @@ public class HomeController(ICategoryService category, IProductService product) 
         //To do: add email collector service
         return View();
     }
+
+    public IActionResult Error(int statusCode)
+    {
+        ViewData["StatusCode"] = statusCode;
+
+        // If you have specific views (404.cshtml, 500.cshtml), you can return them here.
+        if (statusCode == 404)
+        {
+            return View("404");  // Render the 404 custom page
+        }
+        else if (statusCode == 500)
+        {
+            return View("500");  // Render the 500 custom page
+        }
+
+        return View("Error");  // Default error page
+    }
+
+  
 }
