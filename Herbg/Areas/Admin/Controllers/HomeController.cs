@@ -10,6 +10,7 @@ using System.Reflection;
 using Herbg.Infrastructure.Interfaces;
 using Herbg.Services.Interfaces;
 using Herbg.ViewModels.Category;
+using Herbg.Services.Services;
 
 namespace Herbg.Areas.Admin.Controllers;
 
@@ -19,12 +20,14 @@ public class HomeController(
     IProductService productService,
     ICategoryService categoryService,
     ApplicationDbContext context,
-    UserManager<ApplicationUser> userManager) : Controller
+    UserManager<ApplicationUser> userManager,
+    IManufactorerService manufactorerService) : Controller
 {
     private readonly ApplicationDbContext _context = context;
     private readonly UserManager<ApplicationUser> _userManager = userManager;
     private readonly IProductService _productService = productService;
     private readonly ICategoryService _categoryService = categoryService; 
+    private readonly IManufactorerService _manufactorerService = manufactorerService;
 
     public async Task<IActionResult> Index(
      string? searchQuery = null,
@@ -50,138 +53,84 @@ public class HomeController(
     [HttpGet]
     public async Task<IActionResult> DeleteProduct(int productId)
     {
-        var item = await _context.Products.FindAsync(productId); 
-        if (item == null)
+        var productToDelete = await _productService.GetProductByIdAsync(productId); 
+        if (productToDelete == null)
         {
             return NotFound();
         }
 
         var model = new DeleteConfirmationViewModel
         {
-            ItemId = item.Id,
-            ItemName = item.Name,
-            ItemDescription = item.Description
+            ItemId = productToDelete.Id,
+            ItemName = productToDelete.Name,
+            ItemDescription = productToDelete.Description
         };
 
         return View(model);
     }
 
     [HttpPost]
-    //Refactor to work with service and write tests
-    public async Task<IActionResult> ConfirmDelete(int productId) 
+    public async Task<IActionResult> ConfirmDelete(int productId)
     {
-        //Find the product for deletion
-        var productToDelete = await _context.Products
-            .Include(p => p.Reviews)
-            .FirstOrDefaultAsync(p => p.Id == productId);
-        if (productToDelete == null)
+        var result = await _productService.SoftDeleteProductAsync(productId);
+
+        if (!result)
         {
             return NotFound();
         }
 
-        //SoftDelete the object
-        productToDelete.IsDeleted = true;
-
-        //Delete from all user carts
-        var productInCarts = await _context.CartItems
-            .Where(ci => ci.ProductId == productId)
-            .ToArrayAsync();
-        _context.CartItems.RemoveRange(productInCarts);
-
-        //Remove from all wishlists
-        var productInWishlists = await _context.Wishlists
-            .Where(w => w.ProductId == productId)
-            .ToArrayAsync();
-        _context.Wishlists.RemoveRange(productInWishlists);
-
-        //Remove Reviews for the product
-        var reviews = productToDelete.Reviews.ToArray();
-        _context.Reviews.RemoveRange(reviews);
-
-
-        await _context.SaveChangesAsync();
-        return RedirectToAction("Index", "Home", new {area = "Admin"});
+        TempData["SuccessMessage"] = "Product deleted successfully!";
+        return RedirectToAction("Index", "Home", new { area = "Admin" });
     }
 
-    //Refactor to work with service and write tests
+
     [HttpGet]
-    public IActionResult EditProduct(int productId)
+    public async Task<IActionResult> EditProduct(int productId)
     {
-        var product = _context.Products
-             .Include(p => p.Category)
-             .Include(p => p.Manufactorer)  // Include Manufacturer if necessary
-             .FirstOrDefault(p => p.Id == productId);
+        // Use the service to get the product
+        var product = await _productService.GetProductForEditAsync(productId);
 
         if (product == null)
         {
             return NotFound();
         }
 
-        var model = new CreateProductViewModel
-        {
-            Id = product.Id,
-            Name = product.Name,
-            Price = product.Price,
-            Description = product.Description,
-            ImagePath = product.ImagePath,
-            CategoryId = product.CategoryId,
-            ManufactorerId = product.ManufactorerId,  
-                                                     
-        };
+        // Use the service to get the dropdown data
+        ViewBag.Categories = new SelectList(await _categoryService.GetCategoriesAsync(), "Id", "Name", product.CategoryId);
+        ViewBag.Manufacturers = new SelectList(await _manufactorerService.GetManufacturersAsync(), "Id", "Name", product.ManufactorerId);
 
-        
-        ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name", model.CategoryId);
-        ViewBag.Manufacturers = new SelectList(_context.Manufactorers, "Id", "Name", model.ManufactorerId);
-
-        return View(model);
+        return View(product);
     }
 
-    //Refactor to work with service and write tests
-    [HttpPost]
-    public async Task<IActionResult> EditProduct(CreateProductViewModel model) 
-    {
-        //Check if model state is valid
-        if (!ModelState.IsValid) 
-        {
-            //Repopulate dropdowns in case of validation errors
-            ViewBag.Manufacturers = await _context.Manufactorers
-                .Select(m => new SelectListItem 
-                {
-                    Value = m.Id.ToString(),
-                    Text = m.Name,
-                })
-                .ToListAsync();
 
-            ViewBag.Manufacturers = await _context.Manufactorers
-                 .Select(m => new SelectListItem
-                 {
-                     Value = m.Id.ToString(),
-                     Text = m.Name,
-                 })
-                 .ToListAsync();
+    [HttpPost]
+    public async Task<IActionResult> EditProduct(CreateProductViewModel model)
+    {
+        // Validate the model state
+        if (!ModelState.IsValid)
+        {
+            // Populate dropdowns in case of validation errors
+            ViewBag.Categories = new SelectList(await _categoryService.GetCategoriesAsync(), "Id", "Name", model.CategoryId);
+            ViewBag.Manufacturers = new SelectList(await _manufactorerService.GetManufacturersAsync(), "Id", "Name", model.ManufactorerId);
 
             return View(model);
         }
 
-        //Get the product to edit
-        var productToEdit = await _context.Products
-            .FirstOrDefaultAsync(p => p.Id == model.Id);
-        if (productToEdit == null)
+        // Use the product service to update the product
+        var result = await _productService.UpdateProductAsync(model);
+
+        if (!result)
         {
-            return  NotFound();
+            ModelState.AddModelError(string.Empty, "An error occurred while updating the product.");
+            ViewBag.Categories = new SelectList(await _categoryService.GetCategoriesAsync(), "Id", "Name", model.CategoryId);
+            ViewBag.Manufacturers = new SelectList(await _manufactorerService.GetManufacturersAsync(), "Id", "Name", model.ManufactorerId);
+
+            return View(model);
         }
-
-        productToEdit.Name = model.Name;
-        productToEdit.Description = model.Description;
-        productToEdit.CategoryId = model.CategoryId;
-        productToEdit.Price = model.Price;
-        productToEdit.ManufactorerId = model.ManufactorerId;
-        productToEdit.ImagePath = model.ImagePath;
-
-        await _context.SaveChangesAsync();
 
         return RedirectToAction("Index", "Home", new { area = "Admin" });
     }
+
 
     //Refactor to work with service and write tests
     [HttpGet]
