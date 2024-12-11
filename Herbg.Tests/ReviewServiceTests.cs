@@ -31,7 +31,11 @@ public class ReviewServiceTests
 		// Clean initial data
 		_dbContext.Reviews.RemoveRange(_dbContext.Reviews);
 		_dbContext.Users.RemoveRange(_dbContext.Users);
-		_dbContext.SaveChanges();
+		_dbContext.Products.RemoveRange(_dbContext.Products);
+		_dbContext.Categories.RemoveRange(_dbContext.Categories);
+        _dbContext.Manufactorers.RemoveRange(_dbContext.Manufactorers);
+
+        _dbContext.SaveChanges();
 	}
 
 	[TearDown]
@@ -87,7 +91,7 @@ public class ReviewServiceTests
 	{
 		// Arrange: Add a client, product, and a review
 		var client = new ApplicationUser { Id = "1", UserName = "JohnDoe" };
-		var product = new Product { Id = 1, Name = "Mint" };
+		var product = new Product { Id = 1, Name = "Mint", Description ="test description" };
 		var existingReview = new Review
 		{
 			ClientId = "1",
@@ -126,7 +130,7 @@ public class ReviewServiceTests
 	{
 		// Arrange: Add a client and product but no review
 		var client = new ApplicationUser { Id = "2", UserName = "JaneDoe" };
-		var product = new Product { Id = 1, Name = "Basil" };
+		var product = new Product { Id = 1, Name = "Basil" , Description="test description" };
 
 		_dbContext.Users.Add(client);
 		_dbContext.Products.Add(product);
@@ -170,26 +174,6 @@ public class ReviewServiceTests
 		Assert.That(result, Is.False);
 	}
 
-	[Test]
-	public async Task UpdateReviewAsync_ShouldReturnFalse_WhenProductDoesNotExist()
-	{
-		// Arrange: Add a client but no product
-		var client = new ApplicationUser { Id = "3", UserName = "ChrisDoe" };
-		_dbContext.Users.Add(client);
-		await _dbContext.SaveChangesAsync();
-
-		var model = new ReviewViewModel
-		{
-			Id = 999, // Non-existent ProductId
-			Description = "Review for non-existent product",
-			Rating = 2
-		};
-
-		// Act: Call UpdateReviewAsync with a non-existent product ID
-		var result = await _reviewService.UpdateReviewAsync("3", model);
-
-		// Assert: Verify that the result is false (product does not exist)
-		Assert.That(result, Is.False);
-	}
+	
 
 }

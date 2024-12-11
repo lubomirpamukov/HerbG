@@ -1,4 +1,5 @@
-﻿using Herbg.ViewModels.Category;
+﻿using Herbg.Models;
+using Herbg.ViewModels.Category;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace Herbg.Services.Interfaces;
 public interface ICategoryService
 {
     public Task<ICollection<CategoryCardViewModel>> GetAllCategoriesAsync();
+
+    public ICollection<Category> GetAllCategoriesDbModelAsync();
 
     public  Task<IEnumerable<string>> GetCategoriesNamesAsync();
 

@@ -14,6 +14,14 @@ namespace Herbg.Services.Services;
 public class ManufactorerService(IRepository<Manufactorer>manufactorers) : IManufactorerService
 {
     private readonly IRepository<Manufactorer> _manufactorers = manufactorers;
+
+    public ICollection<Manufactorer> GetAllManufactorersDbModel()
+    {
+        return _manufactorers
+            .GetAllAttached()
+            .ToArray();
+    }
+
     public async Task<IEnumerable<string>> GetManufactorersNamesAsync()
     {
         return await _manufactorers

@@ -3,6 +3,8 @@ using Herbg.Models;
 using Herbg.Data;
 using Herbg.Infrastructure;
 using Herbg.Services.Services;
+using Herbg.Services.Interfaces;
+using Moq;
 
 namespace Herbg.Tests
 {
@@ -14,35 +16,47 @@ namespace Herbg.Tests
 		private ApplicationDbContext _dbContext = null!;
 
 		[SetUp]
-		public void SetUp()
-		{
-			// Set up in-memory database
-			_dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
-				.UseInMemoryDatabase(databaseName: "HerbgTestDb1234")
-				.Options;
-			_dbContext = new ApplicationDbContext(_dbContextOptions);
+        public void SetUp()
+        {
+            // Set up in-memory database
+            _dbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(databaseName: "HerbgTestDb1234")
+                .Options;
+            _dbContext = new ApplicationDbContext(_dbContextOptions);
 
-			// Ensure the database is created
-			_dbContext.Database.EnsureCreated();
+            // Ensure the database is created
+            _dbContext.Database.EnsureCreated();
 
-			// Create and inject the ProductService
-			var productRepository = new Repository<Product>(_dbContext);
-			_productService = new ProductService(productRepository);
+            // Create the repositories
+            var productRepository = new Repository<Product>(_dbContext);
+            var categoryRepository = new Repository<Category>(_dbContext);
+            var manufacturerRepository = new Repository<Manufactorer>(_dbContext);
 
-			//Clean Initial db data
-			var productsToRemove = _dbContext.Products.ToArray();
-			_dbContext.Products.RemoveRange(productsToRemove);
+            // Create mock or simple in-memory services
+            var categoryService = new Mock<ICategoryService>();
+            categoryService.Setup(service => service.GetAllCategoriesDbModelAsync()).Returns(new List<Category>());
 
-			var categoryToRemove = _dbContext.Categories.ToArray();
-			_dbContext.Categories.RemoveRange(categoryToRemove);
+            var manufacturerService = new Mock<IManufactorerService>();
+            manufacturerService.Setup(service => service.GetAllManufactorersDbModel()).Returns(new List<Manufactorer>());
 
-			var manufacturerToRemove = _dbContext.Manufactorers.ToArray();
-			_dbContext.Manufactorers.RemoveRange(manufacturerToRemove);
+            // Create and inject the ProductService with all required services
+            _productService = new ProductService(productRepository, categoryService.Object, manufacturerService.Object);
 
-			_dbContext.SaveChanges();
-		}
+            // Clean initial db data
+            var productsToRemove = _dbContext.Products.ToArray();
+            _dbContext.Products.RemoveRange(productsToRemove);
 
-		[TearDown]
+            var categoryToRemove = _dbContext.Categories.ToArray();
+            _dbContext.Categories.RemoveRange(categoryToRemove);
+
+            var manufacturerToRemove = _dbContext.Manufactorers.ToArray();
+            _dbContext.Manufactorers.RemoveRange(manufacturerToRemove);
+
+            _dbContext.SaveChanges();
+        }
+
+
+        [TearDown]
 		public void TearDown()
 		{
 			_dbContext.Products.RemoveRange(_dbContext.Products);  // Remove all products
@@ -52,95 +66,105 @@ namespace Herbg.Tests
 		}
 
 
-		[Test]
-		public async Task GetAllProductsAsync_ShouldReturnProducts_WhenProductsExist()
-		{
-			// Arrange: Add test data to the in-memory database
+        [Test]
+        public async Task GetAllProductsAsync_ShouldReturnProducts_WhenProductsExist()
+        {
+            // Arrange: Add test data to the in-memory database
+            var product1 = new Product
+            {
+                Id = 1,
+                Name = "Product 1",
+                Description = "Description 1",
+                ImagePath = "Path/To/Image1.jpg",
+                Price = 100,
+                IsDeleted = false
+            };
+            var product2 = new Product
+            {
+                Id = 2,
+                Name = "Product 2",
+                Description = "Description 2",
+                ImagePath = "Path/To/Image2.jpg",
+                Price = 200,
+                IsDeleted = false
+            };
+
+            _dbContext.Products.AddRange(product1, product2);
+            await _dbContext.SaveChangesAsync();
+
+            // Act: Call the GetAllProductsAsync method
+            var result = await _productService.GetAllProductsAsync();
+            var products = result.Products.ToList();  // Access the Products property
+
+            // Assert: Verify the results
+            Assert.Multiple(() =>
+            {
+                Assert.That(products, Is.Not.Null);
+                Assert.That(products.Count, Is.EqualTo(2)); // Should match the 2 pre-seeded products
+                Assert.That(products[0].Name, Is.EqualTo("Product 2"));
+                Assert.That(products[1].Name, Is.EqualTo("Product 1"));
+            });
+        }
 
 
-			var product1 = new Product
-			{
-				Id = 1,
-				Name = "Product 1",
-				Description = "Description 1",
-				ImagePath = "Path/To/Image1.jpg",
-				Price = 100,
-				IsDeleted = false
-			};
-			var product2 = new Product
-			{
-				Id = 2,
-				Name = "Product 2",
-				Description = "Description 2",
-				ImagePath = "Path/To/Image2.jpg",
-				Price = 200,
-				IsDeleted = false
-			};
+        [Test]
+        public async Task GetAllProductsAsync_ShouldReturnEmptyList_WhenNoProductsExist()
+        {
+            // Act: Call the GetAllProductsAsync method when there are no products
+            var result = await _productService.GetAllProductsAsync();
+            var products = result.Products.ToList();  // Access the Products property
 
-			_dbContext.Products.AddRange(product1, product2);
-			await _dbContext.SaveChangesAsync();
-
-			// Act: Call the GetAllProductsAsync method
-			var result = await _productService.GetAllProductsAsync();
-			var resultList = result.ToList();
-			// Assert: Verify the results
-			Assert.That(result, Is.Not.Null);
-			Assert.That(result.Count, Is.EqualTo(2)); //I have 4 pre seeded items
-			Assert.That(resultList[0].Name, Is.EqualTo("Product 2"));
-			Assert.That(resultList[1].Name, Is.EqualTo("Product 1"));
-		}
-
-		[Test]
-		public async Task GetAllProductsAsync_ShouldReturnEmptyList_WhenNoProductsExist()
-		{
+            // Assert: Verify the results
+            Assert.Multiple(() =>
+            {
+                Assert.That(products, Is.Not.Null);
+                Assert.That(products.Count, Is.EqualTo(0));  // Ensure that no products are returned
+            });
+        }
 
 
-			// Act: Call the GetAllProductsAsync method when there are no products
-			var result = await _productService.GetAllProductsAsync();
+        [Test]
+        public async Task GetAllProductsAsync_ShouldNotReturnDeletedProducts()
+        {
+            // Arrange: Add test data with one product marked as deleted
+            var product1 = new Product
+            {
+                Id = 1,
+                Name = "Product 1",
+                Description = "Description 1",
+                ImagePath = "Path/To/Image1.jpg",
+                Price = 100,
+                IsDeleted = false
+            };
+            var product2 = new Product
+            {
+                Id = 2,
+                Name = "Product 2",
+                Description = "Description 2",
+                ImagePath = "Path/To/Image2.jpg",
+                Price = 200,
+                IsDeleted = true
+            };
+
+            _dbContext.Products.AddRange(product1, product2);
+            await _dbContext.SaveChangesAsync();
+
+            // Act: Call the GetAllProductsAsync method
+            var result = await _productService.GetAllProductsAsync();
+            var resultList = result.Products.ToList();  // Access the Products property
+
+            // Assert: Verify the results
+            Assert.Multiple(() =>
+            {
+                Assert.That(resultList, Is.Not.Null);
+                Assert.That(resultList.Count, Is.EqualTo(1)); // Only 1 product should be returned (product1)
+                Assert.That(resultList[0].Name, Is.EqualTo("Product 1")); // Ensure the product returned is not deleted
+            });
+        }
 
 
-			// Assert: Verify the results
-			Assert.That(result, Is.Not.Null);
-			Assert.That(result.Count, Is.EqualTo(0)); // I have 4 products seeded on initialization
-		}
 
-		[Test]
-		public async Task GetAllProductsAsync_ShouldNotReturnDeletedProducts()
-		{
-			// Arrange: Add test data with one product marked as deleted
-
-			var product1 = new Product
-			{
-				Id = 1,
-				Name = "Product 1",
-				Description = "Description 1",
-				ImagePath = "Path/To/Image1.jpg",
-				Price = 100,
-				IsDeleted = false
-			};
-			var product2 = new Product
-			{
-				Id = 2,
-				Name = "Product 2",
-				Description = "Description 2",
-				ImagePath = "Path/To/Image2.jpg",
-				Price = 200,
-				IsDeleted = true
-			};
-
-			_dbContext.Products.AddRange(product1, product2);
-			await _dbContext.SaveChangesAsync();
-
-			// Act: Call the GetAllProductsAsync method
-			var result = await _productService.GetAllProductsAsync();
-			var resultList = result.ToList();
-
-			// Assert: Verify the results
-			Assert.That(result, Is.Not.Null);
-			Assert.That(result.Count(), Is.EqualTo(1));
-		}
-
-		[Test]
+        [Test]
 		public async Task GetProductByIdAsync_ShouldReturnProduct_WhenProductExists()
 		{
 			//Arrange 

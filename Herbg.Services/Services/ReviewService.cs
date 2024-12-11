@@ -28,17 +28,23 @@ public class ReviewService(IRepository<ApplicationUser>client,IRepository<Review
     {
         var client = await _client.FindByIdAsync(clientId);
 
-        //Check if customer wrote a review for this product
+        if (client == null)
+        {
+            return false;
+        }
+
+        // Check if customer has already written a review for this product
         var customerReview = await _review
             .GetAllAttached()
             .FirstOrDefaultAsync(review => review.ProductId == model.Id && review.ClientId == clientId);
+
         if (customerReview != null)
         {
-            //Delete old review
+            // Delete old review
             await _review.DeleteAsync(customerReview);
         }
 
-        //Create a review from the viewModel
+        // Create a new review from the viewModel
         var newReview = new Review
         {
             ClientId = clientId,
@@ -50,4 +56,5 @@ public class ReviewService(IRepository<ApplicationUser>client,IRepository<Review
         await _review.AddAsync(newReview);
         return true;
     }
+
 }

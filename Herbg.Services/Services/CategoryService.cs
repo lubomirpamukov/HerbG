@@ -31,6 +31,16 @@ public class CategoryService(IRepository<Category> category, IRepository<Product
         return categories;
     }
 
+    public ICollection<Category> GetAllCategoriesDbModelAsync() 
+    {
+        var categories = _category
+            .GetAllAttached()
+            .Where(c => c.IsDeleted == false)
+            .ToArray();
+        return categories;
+
+    }
+
     public async Task<IEnumerable<CategoryViewModel>> GetCategoriesAsync()
     {
         return await _category
@@ -48,6 +58,7 @@ public class CategoryService(IRepository<Category> category, IRepository<Product
     public async Task<IEnumerable<string>> GetCategoriesNamesAsync()
     {
         return await _category.GetAllAttached()
+            .Where(c => c.IsDeleted)
             .Select(c => c.Name)
             .ToArrayAsync();
     }

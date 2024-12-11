@@ -151,7 +151,7 @@ public class OrderServiceTests
 		var client = new ApplicationUser
 		{
 			Id = clientId,
-			ShippingInformationAddress = "123 Test Street"
+			ShippingInformationAddress = "123 Test Street",
 		};
 
 		var product1 = new Product { Id = 1, Name = "Product1", ImagePath = "path1.jpg", Price = 10, Description = "Test description" };
@@ -195,7 +195,8 @@ public class OrderServiceTests
 		var client = new ApplicationUser
 		{
 			Id = clientId,
-			ShippingInformationAddress = "456 Example Lane"
+			ShippingInformationAddress = "456 Example Lane",
+			
 		};
 
 		var product = new Product { Id = 1, Name = "SingleProduct", ImagePath = "product.jpg", Price = 15 , Description = "Test description"};

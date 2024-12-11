@@ -24,7 +24,6 @@ public class ApplicationUser : IdentityUser
     public string? ShippingInformationCity { get; set; }
 
     // Zip Code (Required, with a custom length range and format for validation)
-    [Required(ErrorMessage = ZipCodeRequiredMessage)]
     [RegularExpression(@"^\d{5}(-\d{4})?$", ErrorMessage = ZipCodeFormatMessage)]
     public string? ShippingInformationZip { get; set; }
 
