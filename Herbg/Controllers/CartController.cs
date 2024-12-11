@@ -129,10 +129,6 @@ namespace Herbg.Controllers
 
             var isMovedToWishlist = await _cartService.MoveCartItemToWishListAsync(clientId, id);
 
-            if (!isMovedToWishlist) 
-            {
-                return NotFound();
-            }
 
             return RedirectToAction("Index", "Cart");
         }
