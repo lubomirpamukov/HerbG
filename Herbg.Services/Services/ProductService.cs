@@ -52,7 +52,7 @@ public class ProductService(
          string? category = null,
          string? manufactorer = null,
          int pageNumber = 1,
-         int pageSize = 3)
+         int pageSize = 8)
     {
         // Base query with includes
         var productsQuery = _product
