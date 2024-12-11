@@ -273,14 +273,7 @@ public class ProductService(
             ImagePath = model.ImagePath // Use the ImagePath from the view model
         };
 
-        try
-        {
-            await _product.AddAsync(newProduct);
-            return true;
-        }
-        catch (Exception)
-        {
-            return false; // Return false if any exception occurs
-        }
+        await _product.AddAsync(newProduct);
+        return true;
     }
 }

@@ -5,6 +5,7 @@ using Herbg.Infrastructure;
 using Herbg.Services.Services;
 using Herbg.Services.Interfaces;
 using Moq;
+using Herbg.ViewModels.Product;
 
 namespace Herbg.Tests
 {
@@ -372,6 +373,335 @@ namespace Herbg.Tests
 			Assert.That(result.Any(p => p.Name == "Parsley"), Is.False);
 		}
 
+        [Test]
+        public async Task GetHomePageProductsAsync_ShouldReturnTop4Products()
+        {
+            // Arrange: Add test data to the in-memory database
+            var products = new List<Product>
+			 {
+			     new Product { Id = 1, Name = "Product 1", ImagePath = "Path/To/Image1.jpg", Description = "Description 1", Price = 100, IsDeleted = false },
+			     new Product { Id = 2, Name = "Product 2", ImagePath = "Path/To/Image2.jpg", Description = "Description 2", Price = 200, IsDeleted = false },
+			     new Product { Id = 3, Name = "Product 3", ImagePath = "Path/To/Image3.jpg", Description = "Description 3", Price = 300, IsDeleted = false },
+			     new Product { Id = 4, Name = "Product 4", ImagePath = "Path/To/Image4.jpg", Description = "Description 4", Price = 400, IsDeleted = false },
+			     new Product { Id = 5, Name = "Product 5", ImagePath = "Path/To/Image5.jpg", Description = "Description 5", Price = 500, IsDeleted = false }
+			 };
 
-	}
+            _dbContext.Products.AddRange(products);
+            await _dbContext.SaveChangesAsync();
+
+            // Act: Call the method
+            var result = await _productService.GetHomePageProductsAsync();
+
+            // Assert: Validate the results
+            Assert.That(result, Is.Not.Null, "Result should not be null.");
+            Assert.That(result.Count, Is.EqualTo(4), "Should return exactly 4 products.");
+            Assert.That(result.Any(p => p.Name == "Product 1"), "Should include 'Product 1'.");
+            Assert.That(result.Any(p => p.Name == "Product 4"), "Should include 'Product 4'.");
+            Assert.That(result.Any(p => p.Name == "Product 5"), Is.False, "'Product 5' should not be included as it exceeds the top 4.");
+        }
+
+        [Test]
+        public async Task GetHomePageProductsAsync_ShouldReturnEmptyList_WhenNoProductsExist()
+        {
+            // Act: Call the method when there are no products
+            var result = await _productService.GetHomePageProductsAsync();
+
+            // Assert: Validate the results
+            Assert.That(result, Is.Not.Null, "Result should not be null.");
+            Assert.That(result.Count, Is.EqualTo(0), "Result should be an empty list.");
+        }
+
+        [Test]
+        public async Task GetHomePageProductsAsync_ShouldExcludeDeletedProducts()
+        {
+            // Arrange: Add test data with some deleted products
+            var products = new List<Product>
+			 {
+			     new Product { Id = 1, Name = "Product 1", ImagePath = "Path/To/Image1.jpg", Description = "Description 1", Price = 100, IsDeleted = false },
+			     new Product { Id = 2, Name = "Product 2", ImagePath = "Path/To/Image2.jpg", Description = "Description 2", Price = 200, IsDeleted = false },
+			     new Product { Id = 3, Name = "Product 3", ImagePath = "Path/To/Image3.jpg", Description = "Description 3", Price = 300, IsDeleted = true },
+			     new Product { Id = 4, Name = "Product 4", ImagePath = "Path/To/Image4.jpg", Description = "Description 4", Price = 400, IsDeleted = false },
+			     new Product { Id = 5, Name = "Product 5", ImagePath = "Path/To/Image5.jpg", Description = "Description 5", Price = 500, IsDeleted = false }
+			 };
+
+            _dbContext.Products.AddRange(products);
+            await _dbContext.SaveChangesAsync();
+
+            // Act: Call the method
+            var result = await _productService.GetHomePageProductsAsync();
+
+            // Assert: Validate the results
+            Assert.That(result, Is.Not.Null, "Result should not be null.");
+            Assert.That(result.Count, Is.EqualTo(4), "Should return 4 products excluding the deleted one.");
+            Assert.That(result.Any(p => p.Name == "Product 3"), Is.False, "'Product 3' should not be included as it is deleted.");
+        }
+
+        [Test]
+        public async Task SoftDeleteProductAsync_ShouldReturnFalse_WhenProductDoesNotExist()
+        {
+            // Act
+            var result = await _productService.SoftDeleteProductAsync(999);
+
+            // Assert
+            Assert.That(result, Is.False, "SoftDeleteProductAsync should return false when product does not exist.");
+        }
+
+        [Test]
+        public async Task SoftDeleteProductAsync_ShouldSoftDeleteProductAndRelatedEntities()
+        {
+            // Arrange
+            var product = new Product
+            {
+                Id = 1,
+                Name = "Test Product",
+                IsDeleted = false,
+                Description = "Test description 1",
+                Reviews = new List<Review>
+            {
+                new Review { Id = 1, Description = "Great product!", ClientId ="guid" },
+                new Review { Id = 2, Description = "Not bad.", ClientId ="guid" }
+            }
+            };
+
+            var cartItems = new List<CartItem>
+        {
+            new CartItem { CartId = "guid", ProductId = 1 },
+            new CartItem { CartId = "guid2", ProductId = 1 }
+        };
+
+            var wishlists = new List<Wishlist>
+        {
+            new Wishlist { Id = 1, ProductId = 1 ,ClientId ="guid" },
+            new Wishlist { Id = 2, ProductId = 1, ClientId ="guid" }
+        };
+
+            await _dbContext.Products.AddAsync(product);
+            await _dbContext.CartItems.AddRangeAsync(cartItems);
+            await _dbContext.Wishlists.AddRangeAsync(wishlists);
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            var result = await _productService.SoftDeleteProductAsync(1);
+
+            // Assert
+            Assert.That(result, Is.True, "SoftDeleteProductAsync should return true when product is successfully soft-deleted.");
+            var deletedProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == 1);
+            Assert.That(deletedProduct!.IsDeleted, Is.True, "Product should be marked as deleted.");
+
+            var remainingCartItems = await _dbContext.CartItems.Where(ci => ci.ProductId == 1).ToListAsync();
+            Assert.That(remainingCartItems, Is.Empty, "Cart items associated with the product should be removed.");
+
+            var remainingWishlists = await _dbContext.Wishlists.Where(w => w.ProductId == 1).ToListAsync();
+            Assert.That(remainingWishlists, Is.Empty, "Wishlists associated with the product should be removed.");
+
+            var remainingReviews = await _dbContext.Reviews.Where(r => r.ProductId == 1).ToListAsync();
+            Assert.That(remainingReviews, Is.Empty, "Reviews associated with the product should be removed.");
+        }
+
+        [Test]
+        public async Task SoftDeleteProductAsync_ShouldNotAffectUnrelatedEntities()
+        {
+            // Arrange
+            var product = new Product { Id = 1, Name = "Test Product", IsDeleted = false, Description ="Test description 1" };
+            var unrelatedProduct = new Product { Id = 2, Name = "Unrelated Product", IsDeleted = false, Description = "Test description 1" };
+
+            await _dbContext.Products.AddRangeAsync(product, unrelatedProduct);
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            var result = await _productService.SoftDeleteProductAsync(1);
+
+            // Assert
+            Assert.That(result, Is.True, "SoftDeleteProductAsync should return true when product is successfully soft-deleted.");
+            var unaffectedProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == 2);
+            Assert.That(unaffectedProduct!.IsDeleted, Is.False, "Unrelated product should not be affected.");
+        }
+
+        [Test]
+        public async Task GetProductForEditAsync_ShouldReturnNull_WhenProductDoesNotExist()
+        {
+            // Act
+            var result = await _productService.GetProductForEditAsync(999);
+
+            // Assert
+            Assert.That(result, Is.Null, "GetProductForEditAsync should return null when the product does not exist.");
+        }
+
+        [Test]
+        public async Task GetProductForEditAsync_ShouldReturnCorrectViewModel_WhenProductExists()
+        {
+            // Arrange
+            var category = new Category { Id = 1, Name = "Test Category", Description = "Test description", ImagePath = "img/test/category.jpg" };
+            var manufacturer = new Manufactorer { Id = 1, Name = "Test Manufacturer", Address = "Test adress " };
+
+            var product = new Product
+            {
+                Id = 1,
+                Name = "Test Product",
+                Price = 100.00m,
+                Description = "Test Description",
+                ImagePath = "test-image.jpg",
+                Category = category,
+                Manufactorer = manufacturer,
+                CategoryId = category.Id,
+                ManufactorerId = manufacturer.Id
+            };
+
+            await _dbContext.Categories.AddAsync(category);
+            await _dbContext.Manufactorers.AddAsync(manufacturer);
+            await _dbContext.Products.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            var result = await _productService.GetProductForEditAsync(1);
+
+            // Assert
+            Assert.That(result, Is.Not.Null, "GetProductForEditAsync should return a valid view model when the product exists.");
+            Assert.That(result!.Id, Is.EqualTo(product.Id), "View model should have the correct product ID.");
+            Assert.That(result.Name, Is.EqualTo(product.Name), "View model should have the correct product name.");
+            Assert.That(result.Price, Is.EqualTo(product.Price), "View model should have the correct product price.");
+            Assert.That(result.Description, Is.EqualTo(product.Description), "View model should have the correct product description.");
+            Assert.That(result.ImagePath, Is.EqualTo(product.ImagePath), "View model should have the correct image path.");
+            Assert.That(result.CategoryId, Is.EqualTo(product.CategoryId), "View model should have the correct category ID.");
+            Assert.That(result.ManufactorerId, Is.EqualTo(product.ManufactorerId), "View model should have the correct manufacturer ID.");
+        }
+
+        [Test]
+        public async Task GetProductForEditAsync_ShouldNotAffectOtherProducts()
+        {
+            // Arrange
+            var category = new Category { Id = 1, Name = "Category for Unrelated Product", Description="Test description", ImagePath="img/test/category.jpg" };
+            var manufacturer = new Manufactorer { Id = 1, Name = "Manufacturer for Unrelated Product" , Address ="Test adress "};
+
+            var unrelatedProduct = new Product
+            {
+                Id = 2,
+                Name = "Unrelated Product",
+                Price = 50.00m,
+                Description = "Unrelated Description",
+                ImagePath = "unrelated-image.jpg",
+                Category = category,
+                Manufactorer = manufacturer,
+                CategoryId = category.Id,
+                ManufactorerId = manufacturer.Id
+            };
+
+            await _dbContext.Categories.AddAsync(category);
+            await _dbContext.Manufactorers.AddAsync(manufacturer);
+            await _dbContext.Products.AddAsync(unrelatedProduct);
+            await _dbContext.SaveChangesAsync();
+
+            // Act
+            var result = await _productService.GetProductForEditAsync(2);
+
+            // Assert
+            Assert.That(result, Is.Not.Null, "GetProductForEditAsync should return a valid view model when unrelated product exists.");
+            Assert.That(result!.Id, Is.EqualTo(unrelatedProduct.Id), "Should return the correct unrelated product.");
+            Assert.That(result.CategoryId, Is.EqualTo(unrelatedProduct.CategoryId), "Should return the correct category ID.");
+            Assert.That(result.ManufactorerId, Is.EqualTo(unrelatedProduct.ManufactorerId), "Should return the correct manufacturer ID.");
+        }
+
+        [Test]
+        public async Task UpdateProductAsync_ShouldReturnFalse_WhenProductDoesNotExist()
+        {
+            // Arrange
+            var model = new CreateProductViewModel
+            {
+                Id = 999, // Non-existent product ID
+                Name = "Updated Product",
+                Description = "Updated Description",
+                Price = 200.00m,
+                CategoryId = 1,
+                ManufactorerId = 1,
+                ImagePath = "updated-image.jpg"
+            };
+
+            // Act
+            var result = await _productService.UpdateProductAsync(model);
+
+            // Assert
+            Assert.That(result, Is.False, "UpdateProductAsync should return false if the product does not exist.");
+        }
+
+        [Test]
+        public async Task UpdateProductAsync_ShouldUpdateProduct_WhenProductExists()
+        {
+            // Arrange
+            var category = new Category { Id = 1, Name = "Category 1", Description = "Category Description", ImagePath = "img/category.jpg" };
+            var manufacturer = new Manufactorer { Id = 1, Name = "Manufacturer 1", Address = "Address 1" };
+
+            var product = new Product
+            {
+                Id = 1,
+                Name = "Original Product",
+                Description = "Original Description",
+                Price = 100.00m,
+                CategoryId = category.Id,
+                ManufactorerId = manufacturer.Id,
+                ImagePath = "original-image.jpg",
+                Category = category,
+                Manufactorer = manufacturer
+            };
+
+            await _dbContext.Categories.AddAsync(category);
+            await _dbContext.Manufactorers.AddAsync(manufacturer);
+            await _dbContext.Products.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
+
+            var model = new CreateProductViewModel
+            {
+                Id = 1,
+                Name = "Updated Product",
+                Description = "Updated Description",
+                Price = 200.00m,
+                CategoryId = 1,
+                ManufactorerId = 1,
+                ImagePath = "updated-image.jpg"
+            };
+
+            // Act
+            var result = await _productService.UpdateProductAsync(model);
+
+            // Assert
+            Assert.That(result, Is.True, "UpdateProductAsync should return true when the product is successfully updated.");
+
+            var updatedProduct = await _dbContext.Products.FindAsync(1);
+            Assert.That(updatedProduct, Is.Not.Null, "Product should still exist in the database.");
+            Assert.That(updatedProduct!.Name, Is.EqualTo("Updated Product"), "Product name should be updated.");
+            Assert.That(updatedProduct.Description, Is.EqualTo("Updated Description"), "Product description should be updated.");
+            Assert.That(updatedProduct.Price, Is.EqualTo(200.00m), "Product price should be updated.");
+            Assert.That(updatedProduct.ImagePath, Is.EqualTo("updated-image.jpg"), "Product image path should be updated.");
+            Assert.That(updatedProduct.CategoryId, Is.EqualTo(1), "Category ID should remain the same.");
+            Assert.That(updatedProduct.ManufactorerId, Is.EqualTo(1), "Manufacturer ID should remain the same.");
+        }
+
+        [Test]
+        public async Task AddProductAsync_ShouldReturnTrue_WhenProductIsAddedSuccessfully()
+        {
+            // Arrange
+            var model = new CreateProductViewModel
+            {
+                Name = "New Product",
+                Price = 150.00m,
+                Description = "New product description",
+                ManufactorerId = 1,
+                CategoryId = 1,
+                ImagePath = "new-product.jpg"
+            };
+
+            // Act
+            var result = await _productService.AddProductAsync(model);
+
+            // Assert
+            Assert.That(result, Is.True, "AddProductAsync should return true when the product is successfully added.");
+            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Name == "New Product");
+            Assert.That(product, Is.Not.Null, "Product should exist in the database.");
+            Assert.That(product!.Name, Is.EqualTo("New Product"), "Product name should match.");
+            Assert.That(product.Price, Is.EqualTo(150.00m), "Product price should match.");
+            Assert.That(product.Description, Is.EqualTo("New product description"), "Product description should match.");
+            Assert.That(product.ImagePath, Is.EqualTo("new-product.jpg"), "Product image path should match.");
+        }
+
+        
+    }
 }
