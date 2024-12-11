@@ -132,80 +132,45 @@ public class HomeController(
     }
 
 
-    //Refactor to work with service and write tests
-    [HttpGet]
-    public async Task<IActionResult> AddProduct() 
+    public async Task<IActionResult> AddProduct()
     {
-        //Create model
+        // Create the model
         var createProductViewModel = new CreateProductViewModel();
 
-        //Create categories viewbag
-        ViewBag.Categories = await _context.Categories
-            .Select(c => new SelectListItem 
-            {
-                Value = c.Id.ToString(),
-                Text = c.Name
-            })
-            .ToListAsync();
-
-        //Create manufacturers viewbag
-        ViewBag.Manufacturers = await _context.Manufactorers
-            .Select(c => new SelectListItem
-            {
-                Value = c.Id.ToString(),
-                Text = c.Name
-            })
-            .ToListAsync();
+        // Use services to populate dropdowns
+        ViewBag.Categories = new SelectList(await _categoryService.GetCategoriesAsync(), "Id", "Name");
+        ViewBag.Manufacturers = new SelectList(await _manufactorerService.GetManufacturersAsync(), "Id", "Name");
 
         return View(createProductViewModel);
     }
 
-    //Refactor to work with service and write tests
+
     [HttpPost]
     public async Task<IActionResult> AddProduct(CreateProductViewModel model)
     {
         // Check if the model state is valid
         if (!ModelState.IsValid)
         {
-            // Repopulate dropdowns
-            ViewBag.Manufacturers = await _context.Manufactorers
-                .Select(m => new SelectListItem
-                {
-                    Value = m.Id.ToString(),
-                    Text = m.Name
-                })
-                .ToListAsync();
-
-            ViewBag.Categories = await _context.Categories
-                .Select(c => new SelectListItem
-                {
-                    Value = c.Id.ToString(),
-                    Text = c.Name
-                })
-                .ToListAsync();
+            // Repopulate dropdowns using services
+            ViewBag.Manufacturers = await _manufactorerService.GetManufacturersAsync();
+            ViewBag.Categories = await _categoryService.GetCategoriesAsync();
 
             return View(model);
         }
 
-        // Create a new product object
-        var newProduct = new Product
-        {
-            Name = model.Name,
-            Price = model.Price,
-            Description = model.Description,
-            ManufactorerId = model.ManufactorerId,
-            CategoryId = model.CategoryId,
-            ImagePath = model.ImagePath  // Directly use the ImagePath URL entered by the user
-        };
+        // Delegate the creation of the new product to the ProductService
+        var result = await _productService.AddProductAsync(model);
 
-        // Save product to the database
-        _context.Products.Add(newProduct);
-        await _context.SaveChangesAsync();
+        if (!result)
+        {
+            ModelState.AddModelError(string.Empty, "An error occurred while saving the product.");
+            return View(model);
+        }
 
         return RedirectToAction("Index", "Home", new { area = "Admin" });
     }
 
-    //Refactor to work with service and write tests
+
     public async Task<IActionResult> CategoryIndex() 
     {
         var categories = await _categoryService.GetAllCategoriesAsync();
@@ -213,7 +178,6 @@ public class HomeController(
         return View(categories);
     }
     
-    //Refactor to work with service and write tests
     [HttpGet]
     public IActionResult AddCategory() 
     {
@@ -222,38 +186,31 @@ public class HomeController(
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddCategory(CategoryCardViewModel model) 
+    public async Task<IActionResult> AddCategory(CategoryCardViewModel model)
     {
+        // Check if the model state is valid
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var categoryToAdd = new Category 
-        {
-            Name = model.Name,
-            ImagePath = model.ImagePath,
-            Description = model.Description,
-        };
+        // Delegate the category creation to the service
+        var result = await _categoryService.AddCategoryAsync(model);
 
-        _context.Categories.Add(categoryToAdd);
-        await _context.SaveChangesAsync();
+        if (!result)
+        {
+            ModelState.AddModelError(string.Empty, "An error occurred while adding the category.");
+            return View(model);
+        }
+
         return RedirectToAction(nameof(CategoryIndex));
     }
 
+
     [HttpGet]
-    public async Task<IActionResult> EditCategory(int categoryId) 
+    public async Task<IActionResult> EditCategory(int categoryId)
     {
-        var categoryViewModel = await _context.Categories
-            .Where(c => c.Id == categoryId)
-            .Select(c => new CategoryCardViewModel 
-            {
-                Id = c.Id,
-                Name = c.Name,
-                ImagePath = c.ImagePath!,
-                Description = c.Description
-            })
-            .FirstOrDefaultAsync();
+        var categoryViewModel = await _categoryService.GetCategoryByIdAsync(categoryId);
 
         if (categoryViewModel == null)
         {
@@ -263,41 +220,36 @@ public class HomeController(
         return View(categoryViewModel);
     }
 
+
     [HttpPost]
-    public async Task<IActionResult> EditCategory(CategoryCardViewModel model) 
+    public async Task<IActionResult> EditCategory(CategoryCardViewModel model)
     {
-        if (!ModelState.IsValid) 
+        if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var categoryToEdit = await _context.Categories
-            .FirstOrDefaultAsync(c => c.Id == model.Id);
+        var isSuccess = await _categoryService.EditCategoryAsync(model);
 
-        categoryToEdit!.Name = model.Name;
-        categoryToEdit.Description = model.Description;
-        categoryToEdit.ImagePath = model.ImagePath;
-
-        _context.Categories.Update(categoryToEdit);
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction(nameof(CategoryIndex));
-    }
-
-    public async Task<IActionResult> DeleteCategory(int categoryId) 
-    {
-        var categoryToDelete = await _context.Categories.FindAsync(categoryId);
-
-        if (categoryToDelete == null)
+        if (!isSuccess)
         {
             return NotFound();
         }
 
-        categoryToDelete.IsDeleted = true;
-        _context.Categories.Update(categoryToDelete);
-        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(CategoryIndex));
+    }
+
+
+    public async Task<IActionResult> DeleteCategory(int categoryId)
+    {
+        var isSuccess = await _categoryService.DeleteCategoryAsync(categoryId);
+
+        if (!isSuccess)
+        {
+            return NotFound();
+        }
 
         return RedirectToAction(nameof(CategoryIndex));
-
     }
+
 }

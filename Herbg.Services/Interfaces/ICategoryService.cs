@@ -14,4 +14,11 @@ public interface ICategoryService
     public  Task<IEnumerable<string>> GetCategoriesNamesAsync();
 
     public Task<IEnumerable<CategoryViewModel>> GetCategoriesAsync();
+
+    public Task<bool> AddCategoryAsync(CategoryCardViewModel model);
+
+    public Task<CategoryCardViewModel?> GetCategoryByIdAsync(int categoryId);
+    public Task<bool> EditCategoryAsync(CategoryCardViewModel model);
+
+    public Task<bool> DeleteCategoryAsync(int categoryId);
 }

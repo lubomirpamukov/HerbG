@@ -261,4 +261,26 @@ public class ProductService(
         return true;
     }
 
+    public async Task<bool> AddProductAsync(CreateProductViewModel model)
+    {
+        var newProduct = new Product
+        {
+            Name = model.Name,
+            Price = model.Price,
+            Description = model.Description,
+            ManufactorerId = model.ManufactorerId,
+            CategoryId = model.CategoryId,
+            ImagePath = model.ImagePath // Use the ImagePath from the view model
+        };
+
+        try
+        {
+            await _product.AddAsync(newProduct);
+            return true;
+        }
+        catch (Exception)
+        {
+            return false; // Return false if any exception occurs
+        }
+    }
 }

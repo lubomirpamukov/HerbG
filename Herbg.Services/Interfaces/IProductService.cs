@@ -36,7 +36,7 @@ public interface IProductService
 
     public Task<CreateProductViewModel?> GetProductForEditAsync(int productId);
 
-    Task<bool> UpdateProductAsync(CreateProductViewModel model);
-    
+    public Task<bool> UpdateProductAsync(CreateProductViewModel model);
 
+    public Task<bool> AddProductAsync(CreateProductViewModel model);
 }
