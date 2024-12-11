@@ -30,6 +30,19 @@ public class CategoryService(IRepository<Category> category) : ICategoryService
         return categories;
     }
 
+    public async Task<IEnumerable<CategoryViewModel>> GetCategoriesAsync()
+    {
+        return await _category
+            .GetAllAttached()
+            .Select(c => new CategoryViewModel
+            {
+                Id = c.Id,
+                Name = c.Name
+            })
+            .ToListAsync();
+    }
+
+
     public async Task<IEnumerable<string>> GetCategoriesNamesAsync()
     {
         return await _category.GetAllAttached()

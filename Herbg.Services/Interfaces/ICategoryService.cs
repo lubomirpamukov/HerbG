@@ -12,4 +12,6 @@ public interface ICategoryService
     public Task<ICollection<CategoryCardViewModel>> GetAllCategoriesAsync();
 
     public  Task<IEnumerable<string>> GetCategoriesNamesAsync();
+
+    public Task<IEnumerable<CategoryViewModel>> GetCategoriesAsync();
 }
