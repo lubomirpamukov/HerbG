@@ -1,7 +1,17 @@
-﻿<div class="container mt-5">
+﻿@using Herbg.ViewModels.Category
+@model IEnumerable<CategoryCardViewModel>
+
+<div class="container mt-5">
     <!-- Header -->
     <div class="text-center mb-4">
         <h1 class="display-5">All Categories</h1>
+    </div>
+
+    <!-- Add Product Button -->
+    <div class="mb-4 text-center">
+        <a asp-area="Admin" asp-controller="Home" asp-action="AddCategory" class="btn btn-success">
+            Add Category
+        </a>
     </div>
 
     <!-- Categories Grid -->
@@ -18,13 +28,8 @@
                         <p class="card-text">@category.Description</p>
 
                         <!-- Button Container -->
-                        <div class="mt-auto d-flex justify-content-between">
-                            <form asp-area="Admin" asp-controller="Home" asp-action="AddCategory" method="post">
-                                <input type="hidden" name="categoryId" value="@category.Id" />
-                                <button type="submit" class="btn btn-primary">Add</button>
-                            </form>
-
-                            <form asp-area="Admin" asp-controller="Home" asp-action="EditCategory" method="post">
+                        <div class="mt-auto d-flex justify-content">
+                            <form asp-area="Admin" asp-controller="Home" asp-action="EditCategory" method="get" class="me-3">
                                 <input type="hidden" name="categoryId" value="@category.Id" />
                                 <button type="submit" class="btn btn-secondary">Edit</button>
                             </form>

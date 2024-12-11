@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Reflection;
 using Herbg.Infrastructure.Interfaces;
 using Herbg.Services.Interfaces;
+using Herbg.ViewModels.Category;
 
 namespace Herbg.Areas.Admin.Controllers;
 
@@ -255,11 +256,99 @@ public class HomeController(
         return RedirectToAction("Index", "Home", new { area = "Admin" });
     }
 
+    //Refactor to work with service and write tests
     public async Task<IActionResult> CategoryIndex() 
     {
         var categories = await _categoryService.GetAllCategoriesAsync();
             
         return View(categories);
     }
+    
+    //Refactor to work with service and write tests
+    [HttpGet]
+    public IActionResult AddCategory() 
+    {
+        var categoryView = new CategoryCardViewModel();
+        return View(categoryView);
+    }
 
+    [HttpPost]
+    public async Task<IActionResult> AddCategory(CategoryCardViewModel model) 
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var categoryToAdd = new Category 
+        {
+            Name = model.Name,
+            ImagePath = model.ImagePath,
+            Description = model.Description,
+        };
+
+        _context.Categories.Add(categoryToAdd);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(CategoryIndex));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditCategory(int categoryId) 
+    {
+        var categoryViewModel = await _context.Categories
+            .Where(c => c.Id == categoryId)
+            .Select(c => new CategoryCardViewModel 
+            {
+                Id = c.Id,
+                Name = c.Name,
+                ImagePath = c.ImagePath!,
+                Description = c.Description
+            })
+            .FirstOrDefaultAsync();
+
+        if (categoryViewModel == null)
+        {
+            return NotFound();
+        }
+
+        return View(categoryViewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditCategory(CategoryCardViewModel model) 
+    {
+        if (!ModelState.IsValid) 
+        {
+            return View(model);
+        }
+
+        var categoryToEdit = await _context.Categories
+            .FirstOrDefaultAsync(c => c.Id == model.Id);
+
+        categoryToEdit!.Name = model.Name;
+        categoryToEdit.Description = model.Description;
+        categoryToEdit.ImagePath = model.ImagePath;
+
+        _context.Categories.Update(categoryToEdit);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(CategoryIndex));
+    }
+
+    public async Task<IActionResult> DeleteCategory(int categoryId) 
+    {
+        var categoryToDelete = await _context.Categories.FindAsync(categoryId);
+
+        if (categoryToDelete == null)
+        {
+            return NotFound();
+        }
+
+        categoryToDelete.IsDeleted = true;
+        _context.Categories.Update(categoryToDelete);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(CategoryIndex));
+
+    }
 }

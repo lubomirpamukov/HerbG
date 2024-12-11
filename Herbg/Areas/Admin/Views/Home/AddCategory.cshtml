@@ -1,0 +1,46 @@
+﻿@model Herbg.ViewModels.Category.CategoryCardViewModel
+
+@{
+    ViewData["Title"] = "Add Category";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center">Add a New Category</h2>
+
+            <form asp-controller="Home" asp-action="AddCategory" method="post" enctype="multipart/form-data" class="mt-4">
+                <!-- Category Name -->
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Category Name</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <!-- Image Path -->
+                <div class="mb-3">
+                    <label asp-for="ImagePath" class="form-label">Image Path (URL)</label>
+                    <input asp-for="ImagePath" class="form-control" />
+                    <span asp-validation-for="ImagePath" class="text-danger"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Add Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Validation Scripts -->
+    <partial name="_ValidationScriptsPartial" />
+}

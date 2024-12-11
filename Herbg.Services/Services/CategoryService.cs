@@ -18,6 +18,7 @@ public class CategoryService(IRepository<Category> category) : ICategoryService
     {
         var categories = await _category
             .GetAllAttached()
+            .Where(c => c.IsDeleted == false)
             .Select(c => new CategoryCardViewModel
             {
                 Id = c.Id,
