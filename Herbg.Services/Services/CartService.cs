@@ -116,34 +116,53 @@ public class CartService(IRepository<Cart> cart, IRepository<Product> product, I
         return clientCart!;
     }
 
-    public async Task<bool> MoveCartItemToWishListAsync(string clinetId, int productId)
+    public async Task<bool> MoveCartItemToWishListAsync(string clientId, int productId)
     {
+        // Fetch the client cart along with the cart items
         var clientCart = await _cart.GetAllAttached()
-                .Where(c => c.ClientId == clinetId)
-                .Include(c => c.CartItems)
-                .FirstOrDefaultAsync();
+            .Where(c => c.ClientId == clientId)
+            .Include(c => c.CartItems)
+            .FirstOrDefaultAsync();
+
         if (clientCart == null)
         {
-            //There is no client card
+            // No client cart found, return false
             return false;
         }
 
-        var cartItem = clientCart.CartItems.Where(ci => ci.ProductId == productId).FirstOrDefault();
+        // Fetch the cart item from the client's cart
+        var cartItem = clientCart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
 
-        if (cartItem == null) 
+        if (cartItem == null)
         {
-            //Client cart is empty
+            // If the cart item doesn't exist, return false
             return false;
         }
 
-        //Add to wishlist
-        var newWishlistItem = new Wishlist { ClientId = clinetId, ProductId = cartItem.ProductId };
+        // Check if the item is already in the wishlist
+        var existingWishlistItem = await _wishlist.GetAllAttached()
+            .FirstOrDefaultAsync(w => w.ClientId == clientId && w.ProductId == productId);
+
+        if (existingWishlistItem != null)
+        {
+            // If the item is already in the wishlist, just remove it from the cart
+            clientCart.CartItems.Remove(cartItem);
+            await _cart.UpdateAsync(clientCart);
+            return true;
+        }
+
+        // If the item is not in the wishlist, add it
+        var newWishlistItem = new Wishlist { ClientId = clientId, ProductId = cartItem.ProductId };
         await _wishlist.AddAsync(newWishlistItem);
-        //Remove from cart
+
+        // Remove the item from the cart
         clientCart.CartItems.Remove(cartItem);
         await _cart.UpdateAsync(clientCart);
+
         return true;
     }
+
+
 
     public async Task<bool> RemoveCartItemAsync(string clientId, int productId)
     {
