@@ -4,9 +4,11 @@ using Herbg.Infrastructure;
 using Herbg.Infrastructure.Interfaces;
 using Herbg.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using NuGet.Protocol.Core.Types;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Herbg
 {
@@ -31,7 +33,10 @@ namespace Herbg
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews(config => 
+            {
+                config.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            });
 
             //Add generic repository
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -49,9 +54,12 @@ namespace Herbg
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            
 
             app.UseHttpsRedirection();
             app.UseRouting();
