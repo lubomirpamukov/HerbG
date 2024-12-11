@@ -31,4 +31,12 @@ public interface IProductService
     string? manufactorer);
 
     public Task<ICollection<ProductCardViewModel>> GetHomePageProductsAsync();
+
+    public Task<bool> SoftDeleteProductAsync(int productId);
+
+    public Task<CreateProductViewModel?> GetProductForEditAsync(int productId);
+
+    Task<bool> UpdateProductAsync(CreateProductViewModel model);
+    
+
 }

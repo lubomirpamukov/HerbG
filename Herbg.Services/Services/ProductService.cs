@@ -175,4 +175,90 @@ public class ProductService(
         }
         return viewModelCollection;
     }
+
+    public async Task<bool> SoftDeleteProductAsync(int productId)
+    {
+        // Find the product
+        var product = await _product
+            .GetAllAttached()
+            .Include(p => p.Reviews)
+            .FirstOrDefaultAsync(p => p.Id == productId);
+
+        if (product == null)
+        {
+            return false; // Product not found
+        }
+
+        // Mark the product as deleted
+        product.IsDeleted = true;
+
+        // Remove related entities
+        var productInCarts = await _product
+            .GetDbContext()
+            .Set<CartItem>()
+            .Where(ci => ci.ProductId == productId)
+            .ToArrayAsync();
+        _product.GetDbContext().Set<CartItem>().RemoveRange(productInCarts);
+
+        var productInWishlists = await _product
+            .GetDbContext()
+            .Set<Wishlist>()
+            .Where(w => w.ProductId == productId)
+            .ToArrayAsync();
+        _product.GetDbContext().Set<Wishlist>().RemoveRange(productInWishlists);
+
+        _product.GetDbContext().Set<Review>().RemoveRange(product.Reviews);
+
+        // Save changes
+        await _product.GetDbContext().SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<CreateProductViewModel?> GetProductForEditAsync(int productId)
+    {
+        var product = await _product
+            .GetAllAttached()
+            .Include(p => p.Category)
+            .Include(p => p.Manufactorer)
+            .FirstOrDefaultAsync(p => p.Id == productId);
+
+        if (product == null)
+        {
+            return null; // Product not found
+        }
+
+        // Map the product to the view model
+        return new CreateProductViewModel
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Price = product.Price,
+            Description = product.Description,
+            ImagePath = product.ImagePath,
+            CategoryId = product.CategoryId,
+            ManufactorerId = product.ManufactorerId
+        };
+    }
+
+    public async Task<bool> UpdateProductAsync(CreateProductViewModel model)
+    {
+        var product = await _product.GetAllAttached().FirstOrDefaultAsync(p => p.Id == model.Id);
+
+        if (product == null)
+        {
+            return false; // Product not found
+        }
+
+        product.Name = model.Name;
+        product.Description = model.Description;
+        product.CategoryId = model.CategoryId;
+        product.Price = model.Price;
+        product.ManufactorerId = model.ManufactorerId;
+        product.ImagePath = model.ImagePath;
+
+        await _product.SaveChangesAsync();
+        return true;
+    }
+
 }
