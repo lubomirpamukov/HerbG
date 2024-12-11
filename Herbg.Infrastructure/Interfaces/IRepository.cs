@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Herbg.Infrastructure.Interfaces;
 
@@ -16,19 +17,15 @@ public interface IRepository<T> where T : class
 
     public Task<bool> UpdateAsync(T entity);
 
-    public Task<bool> SoftDeleteAsync(T entity);
-
-    public Task<bool> SoftDeleteRangeAsync(IEnumerable<T> entities);
-
     public Task<bool> DeleteAsync(T entity);
 
     public Task<bool> DeleteRangeAsync(IEnumerable<T> entities);
-
-    public Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize);
 
     public Task<T?> FindByConditionAsync(Expression<Func<T, bool>> predicate);
 
     public Task<int> CountAsync();
 
     public Task<bool>SaveChangesAsync();
+
+    DbContext GetDbContext();
 }

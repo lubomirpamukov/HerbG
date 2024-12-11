@@ -93,10 +93,11 @@ public class Repository<T> : IRepository<T> where T : class
         return  _dbSet.AsQueryable();
     }
 
-    public Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize)
+    public DbContext GetDbContext()
     {
-        throw new NotImplementedException();
+        return (DbContext)_context;
     }
+
 
 	public async Task<bool>SaveChangesAsync()
 	{
@@ -104,15 +105,6 @@ public class Repository<T> : IRepository<T> where T : class
         return true;
 	}
 
-	public Task<bool> SoftDeleteAsync(T entity)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> SoftDeleteRangeAsync(IEnumerable<T> entities)
-    {
-        throw new NotImplementedException();
-    }
 
     public async Task<bool> UpdateAsync(T entity)
     {
