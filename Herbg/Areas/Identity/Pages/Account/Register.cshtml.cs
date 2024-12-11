@@ -99,11 +99,7 @@ namespace Herbg.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            //Custom Property for the extension fo the application user
-            [Required]
-            [StringLength(200, ErrorMessage = "The address must not exceed 200 characters.")]
-            [Display(Name = "Address")]
-            public string Address { get; set; }
+           
         }
 
 
@@ -124,8 +120,6 @@ namespace Herbg.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 
-                //Add custom property address
-                user.ShippingInformationAddress = Input.Address;
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
