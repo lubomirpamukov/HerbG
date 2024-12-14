@@ -3,7 +3,7 @@ Login Admin credentials
 adminEmail = "admin@herbg.com"
 adminPassword = "Admin@123"
 
-Fictional website for selling herbs globally project.
+Fictional website for selling herbs globally project made on ASP.NET Core
 
 Database diagram:
 
@@ -55,7 +55,7 @@ User account manage
 
 
 3.Admin area
--Admins can create delete edit products 
+-Admins can create, delete, edit products and categories 
 
 Dashboard
 
