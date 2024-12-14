@@ -5,7 +5,7 @@ adminPassword = "Admin@123"
 
 Fictional website for selling herbs globally project.
 
-!.Functionality for unregistered users
+1.Functionality for unregistered users
 -Users can register
 -Users can view categories
 -Users can view Products and see their details
